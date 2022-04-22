@@ -36,49 +36,49 @@ router.get('/profile', authController.isLoggedIn,  (req,res) => {
 //Orar
 const orarController = require('../controllers/orarController');
 
-router.get('/orar', orarController.view);
-router.post('/orar', orarController.find);
+router.get('/orar',orarController.isLoggedIn, orarController.view);
+router.post('/orar',orarController.isLoggedIn, orarController.find);
 
-router.get('/orar-add',orarController.form);
-router.post('/orar-add',orarController.create);
+router.get('/orar-add',orarController.isLoggedIn,orarController.form);
+router.post('/orar-add',orarController.isLoggedIn,orarController.create);
 
-router.get('/orar-edit/:id',orarController.edit);
-router.post('/orar-edit/:id',orarController.update);
+router.get('/orar-edit/:id',orarController.isLoggedIn,orarController.edit);
+router.post('/orar-edit/:id',orarController.isLoggedIn,orarController.update);
 
-router.get('/orar-view/:id',orarController.viewuser);
+router.get('/orar-view/:id',orarController.isLoggedIn,orarController.viewuser);
 
-router.get('/orar-delete/:id',orarController.delete);
+router.get('/orar-delete/:id',orarController.isLoggedIn,orarController.delete);
 
 //Catalog
 const catalogController = require('../controllers/catalogController');
 
-router.get('/catalog', catalogController.view);
-router.post('/catalog', catalogController.find);
+router.get('/catalog',catalogController.isLoggedIn ,catalogController.view);
+router.post('/catalog',catalogController.isLoggedIn, catalogController.find);
 
-router.get('/catalog-add',catalogController.form);
-router.post('/catalog-add',catalogController.create);
+router.get('/catalog-add',catalogController.isLoggedIn,catalogController.form);
+router.post('/catalog-add',catalogController.isLoggedIn,catalogController.create);
 
-router.get('/catalog-edit/:catalog',catalogController.edit);
-router.post('/catalog-edit/:catalog',catalogController.update);
+router.get('/catalog-edit/:catalog',catalogController.isLoggedIn,catalogController.edit);
+router.post('/catalog-edit/:catalog',catalogController.isLoggedIn,catalogController.update);
 
-router.get('/catalog-view/:table',catalogController.viewuser);
+router.get('/catalog-view/:table',catalogController.isLoggedIn,catalogController.viewuser);
 
-router.get('/catalog-delete/:catalog',catalogController.delete);
+router.get('/catalog-delete/:catalog',catalogController.isLoggedIn,catalogController.delete);
 
 //Grupa
 const grupaController = require('../controllers/grupaController');
 
-router.get('/grupa/:grupa', grupaController.view);
-router.post('/grupa/:grupa', grupaController.find);
+router.get('/grupa/:grupa',grupaController.isLoggedIn ,grupaController.view);
+router.post('/grupa/:grupa',grupaController.isLoggedIn, grupaController.find);
 
-router.get('/grupa/:grupa/student-add',grupaController.form);
-router.post('/grupa/:grupa/student-add',grupaController.create);
+router.get('/grupa/:grupa/student-add',grupaController.isLoggedIn,grupaController.form);
+router.post('/grupa/:grupa/student-add',grupaController.isLoggedIn,grupaController.create);
 
-router.get('/grupa/:grupa/student-edit/:id',grupaController.edit);
-router.post('/grupa/:grupa/student-edit/:id',grupaController.update);
+router.get('/grupa/:grupa/student-edit/:id',grupaController.isLoggedIn,grupaController.edit);
+router.post('/grupa/:grupa/student-edit/:id',grupaController.isLoggedIn,grupaController.update);
 
-router.get('/grupa/:grupa/student-view/:id',grupaController.viewuser);
+router.get('/grupa/:grupa/student-view/:id',grupaController.isLoggedIn,grupaController.viewuser);
 
-router.get('/grupa/:grupa/student-delete/:id',grupaController.delete); 
+router.get('/grupa/:grupa/student-delete/:id',grupaController.isLoggedIn,grupaController.delete); 
 
 module.exports = router;

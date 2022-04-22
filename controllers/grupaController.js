@@ -10,6 +10,8 @@ const pool = mysql.createPool({
     database: process.env.DATABASE
 });
 
+const jwt = require ('jsonwebtoken');
+const { promisify } = require('util');
 
 
 //view users
@@ -36,7 +38,11 @@ exports.view = (req,res)=>{
             if(!err){
                 let removedUser = req.query.removed;
                 let grupamea = req.params.grupa;
-                res.render('grupa-home', {rows, removedUser,grupamea,title:'grupahome',layout:'grupa-main'});
+                if (req.user){
+                    res.render('grupa-home', {rows, removedUser,grupamea,title:'grupahome',layout:'grupa-main'});
+                } else {
+                    res.redirect('/login');
+                }
             } else {
                 console.log(err);
             }
@@ -63,7 +69,11 @@ exports.find = (req,res)=>{
 
             if(!err){
                 let grupamea = req.params.grupa;
-                res.render('grupa-home', {rows,grupamea,title:'grupafind',layout:'grupa-main'});
+                if (req.user){
+                    res.render('grupa-home', {rows,grupamea,title:'grupafind',layout:'grupa-main'});
+                } else {
+                    res.redirect('/login');
+                }
             } else {
                 console.log(err);
             }
@@ -76,7 +86,9 @@ exports.find = (req,res)=>{
 
 exports.form = (req,res) => {
     const grupamea = req.params.grupa;
-    res.render('grupa-add', {grupamea,title:'grupaadd',layout:'grupa-main'});
+    if (req.user){
+        res.render('grupa-add', {grupamea,title:'grupaadd',layout:'grupa-main'});
+    }
 }
 
 //Add new user
@@ -96,7 +108,11 @@ exports.create = (req,res)=>{
 
             if(!err){
                 const grupamea = req.params.grupa;
-                res.render('grupa-add',{grupamea,alert:'Student '+nume+' '+prenume+' has been added succesfully.',title:'grupanew',layout:'grupa-main'});
+                if (req.user){
+                    res.render('grupa-add',{grupamea,alert:'Student '+nume+' '+prenume+' has been added succesfully.',title:'grupanew',layout:'grupa-main'});
+                } else {
+                    res.redirect('/login');
+                }
             } else {
                 console.log(err);
             }
@@ -123,7 +139,11 @@ exports.edit = (req,res) => {
 
             if(!err){
                 const grupamea = req.params.grupa;
-                res.render('grupa-edit', {rows,grupamea,title:'grupaedit',layout:'grupa-main'});
+                if (req.user){
+                    res.render('grupa-edit', {rows,grupamea,title:'grupaedit',layout:'grupa-main'});
+                } else {
+                    res.redirect('/login');
+                }
             } else {
                 console.log(err);
             }
@@ -159,7 +179,11 @@ exports.update = (req,res) => {
             
                         if(!err){
                             const grupamea = req.params.grupa;
-                            res.render('grupa-edit', {rows,grupamea, alert:'Student '+nume+' '+prenume+' has been updated succesfully.',title:'grupaupdate',layout:'grupa-main'});
+                            if (req.user){
+                                res.render('grupa-edit', {rows,grupamea, alert:'Student '+nume+' '+prenume+' has been updated succesfully.',title:'grupaupdate',layout:'grupa-main'});
+                            } else {
+                                res.redirect('/login');
+                            }
                         } else {
                             console.log(err);
                         }
@@ -195,7 +219,11 @@ exports.delete = (req,res) => {
             if(!err){
                 grupamea = req.params.grupa;
                 let removedUser = encodeURIComponent('succesfullyRemoved');
-                res.redirect('/grupa/'+grupamea+'?removed='+removedUser);
+                if (req.user){
+                    res.redirect('/grupa/'+grupamea+'?removed='+removedUser);
+                } else {
+                    res.redirect('/login');
+                }
             } else {
                 console.log(err); 
             }
@@ -223,7 +251,11 @@ exports.viewuser = (req,res)=>{
 
             if(!err){
                 grupamea = req.params.grupa;
-                res.render('grupa-view', {rows,grupamea,title:'grupaview',layout:'grupa-main'});
+                if (req.user){
+                    res.render('grupa-view', {rows,grupamea,title:'grupaview',layout:'grupa-main'});
+                } else {
+                    res.redirect('/login');
+                }
             } else {
                 console.log(err);
             }
@@ -233,3 +265,34 @@ exports.viewuser = (req,res)=>{
         })
     })
 }
+
+exports.isLoggedIn = async (req,res,next) => {
+
+    //console.log(req.cookies);
+    if ( req.cookies.jwt ){
+        try{
+            // 1) Verify the token. (make sure token exists, and see which user is this token from)
+            const decoded = await promisify(jwt.verify)(req.cookies.jwt,process.env.JWT_SECRET);
+            console.log(decoded);
+
+            // 2) Check if the user still exists.
+            pool.query('SELECT * FROM users WHERE id=?', [decoded.id], (error, result) =>{
+
+                console.log(result);
+
+                if(!result){
+                    return next();
+                }
+
+                req.user = result[0];
+                return next();
+            })
+
+        }catch(error){
+            console.log(error);
+            return next();
+        }
+    }else{
+        next(); 
+    }
+} 

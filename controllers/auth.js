@@ -144,3 +144,7 @@ exports.logout = async (req,res) => {
 
     res.status(200).redirect('/');
 }
+
+exports.isAdmin = (req,res) => {
+    console.log(user.admin);
+}

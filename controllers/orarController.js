@@ -10,6 +10,8 @@ const pool = mysql.createPool({
     database: process.env.DATABASE
 });
 
+const jwt = require ('jsonwebtoken');
+const { promisify } = require('util');
 
 
 //view users
@@ -26,7 +28,14 @@ exports.view = (req,res)=>{
 
             if(!err){
                 let removedUser = req.query.removed;
-                res.render('orar-home', {rows, removedUser,title:'orarhome',layout:'orar-main'});
+
+                if(req.user){
+                    res.render('orar-home', {rows, removedUser,title:'orarhome',layout:'orar-main'});
+                }
+                else{
+                    res.redirect('/login');
+                }
+
             } else {
                 console.log(err);
             }
@@ -52,7 +61,12 @@ exports.find = (req,res)=>{
             connection.release();
 
             if(!err){
-                res.render('orar-home', {rows,title:'orarfind',layout:'orar-main'});
+                if(req.user){
+                    res.render('orar-home', {rows,title:'orarfind',layout:'orar-main'});
+                }
+                else{
+                    res.redirect('/login');
+                }
             } else {
                 console.log(err);
             }
@@ -64,7 +78,12 @@ exports.find = (req,res)=>{
 }
 
 exports.form = (req,res) => {
-    res.render('orar-add', {title:'oraradd',layout:'orar-main'});
+    if(req.user){
+        res.render('orar-add', {title:'oraradd',layout:'orar-main'});
+    }
+    else{
+        res.redirect('/login');
+    }
 }
 
 //Add new user
@@ -84,7 +103,11 @@ exports.create = (req,res)=>{
             connection.release();
 
             if(!err){
-                res.render('orar-add',{alert:'Grupa '+grupa+' has been added succesfully.',title:'orarnew',layout:'orar-main'});
+                if(req.user){
+                    res.render('orar-add',{alert:'Grupa '+grupa+' has been added succesfully.',title:'orarnew',layout:'orar-main'});
+                } else{
+                    res.redirect('/login');
+                }
             } else {
                 console.log(err);
             }
@@ -117,7 +140,11 @@ exports.edit = (req,res) => {
             connection.release();
 
             if(!err){
-                res.render('orar-edit', {rows,title:'oraredit',layout:'orar-main'});
+                if(req.user){
+                    res.render('orar-edit', {rows,title:'oraredit',layout:'orar-main'});
+                } else { 
+                    res.redirect('/login');
+                }
             } else {
                 console.log(err);
             }
@@ -152,7 +179,11 @@ exports.update = (req,res) => {
                         connection.release();
             
                         if(!err){
-                            res.render('orar-edit', {rows, alert:'Grupa '+grupa+', from '+facultate+' has been updated.',title:'orarupdate',layout:'orar-main'});
+                            if(req.user){
+                                res.render('orar-edit', {rows, alert:'Grupa '+grupa+', from '+facultate+' has been updated.',title:'orarupdate',layout:'orar-main'});
+                            } else {
+                                res.redirect('/login');
+                            }
                         } else {
                             console.log(err);
                         }
@@ -191,8 +222,12 @@ exports.delete = (req,res) => {
             connection.release();
 
             if(!err){
-                let removedUser = encodeURIComponent('succesfullyRemoved');
-                res.redirect('/orar?removed='+removedUser);
+                if(req.user){
+                    let removedUser = encodeURIComponent('succesfullyRemoved');
+                    res.redirect('/orar?removed='+removedUser);
+                } else{
+                    res.redirect('/login');
+                }
             } else {
                 console.log(err); 
             }
@@ -218,7 +253,12 @@ exports.viewuser = (req,res)=>{
             connection.release();
 
             if(!err){
-                res.render('orar-view', {rows,title:'orarview',layout:'orar-main'});
+                if(req.user){
+                    res.render('orar-view', {rows,title:'orarview',layout:'orar-main'});
+                }
+                else{
+                    res.redirect('/login');
+                }
             } else {
                 console.log(err);
             }
@@ -228,3 +268,34 @@ exports.viewuser = (req,res)=>{
         })
     })
 }
+
+exports.isLoggedIn = async (req,res,next) => {
+
+    //console.log(req.cookies);
+    if ( req.cookies.jwt ){
+        try{
+            // 1) Verify the token. (make sure token exists, and see which user is this token from)
+            const decoded = await promisify(jwt.verify)(req.cookies.jwt,process.env.JWT_SECRET);
+            console.log(decoded);
+
+            // 2) Check if the user still exists.
+            pool.query('SELECT * FROM users WHERE id=?', [decoded.id], (error, result) =>{
+
+                console.log(result);
+
+                if(!result){
+                    return next();
+                }
+
+                req.user = result[0];
+                return next();
+            })
+
+        }catch(error){
+            console.log(error);
+            return next();
+        }
+    }else{
+        next(); 
+    }
+} 

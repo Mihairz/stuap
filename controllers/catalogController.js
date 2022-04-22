@@ -10,7 +10,8 @@ const pool = mysql.createPool({
     database: process.env.DATABASE
 });
 
-
+const jwt = require ('jsonwebtoken');
+const { promisify } = require('util');
 
 //view users
 exports.view = (req,res)=>{
@@ -26,7 +27,11 @@ exports.view = (req,res)=>{
 
             if(!err){
                 let removedUser = req.query.removed;
-                res.render('catalog-home', {rows, removedUser,title:'cataloghome',layout:'catalog-main'});
+                if(req.user){
+                    res.render('catalog-home', {rows, removedUser,title:'cataloghome',layout:'catalog-main'});
+                } else {
+                    res.redirect('/login');
+                }
             } else {
                 console.log(err);
             }
@@ -52,7 +57,11 @@ exports.find = (req,res)=>{
             connection.release();
 
             if(!err){
-                res.render('catalog-home', {rows,title:'catalogfind',layout:'catalog-main'});
+                if(req.user){
+                    res.render('catalog-home', {rows,title:'catalogfind',layout:'catalog-main'});
+                } else {
+                    res.redirect('/login');
+                }
             } else {
                 console.log(err);
             }
@@ -64,7 +73,11 @@ exports.find = (req,res)=>{
 }
 
 exports.form = (req,res) => {
-    res.render('catalog-add', {title:'catalogadd',layout:'catalog-main'});
+    if(req.user){
+        res.render('catalog-add', {title:'catalogadd',layout:'catalog-main'});
+    } else {
+        res.redirect('/login');
+    }
 }
 
 //Add new user
@@ -78,12 +91,16 @@ exports.create = (req,res)=>{
 
         let searchTerm = req.body.search;
 
-        connection.query('CREATE TABLE `?` ( `id` INT NOT NULL AUTO_INCREMENT , `nume` VARCHAR(10) NOT NULL , `prenume` VARCHAR(30) NOT NULL , `note` TEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB; ',[grupaFaraSpatii],(err)=>{
+        connection.query('CREATE TABLE `'+grupaFaraSpatii+'` ( `id` INT NOT NULL AUTO_INCREMENT ,`grupa` VARCHAR(10) NOT NULL ,`nume` VARCHAR(10) NOT NULL , `prenume` VARCHAR(30) NOT NULL ,`email` VARCHAR(30) NOT NULL, `note` TEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB; ',(err)=>{
             if(err){
                 console.log(err)}
             else{
                 console.log("Tabel creat.")
-                res.render('catalog-add',{alert: grupaFaraSpatii+' added succesfully.',title:'catalognew',layout:'catalog-main'});
+                if(req.user){
+                    res.render('catalog-add',{alert: grupaFaraSpatii+' added succesfully.',title:'catalognew',layout:'catalog-main'});
+                } else {
+                    res.redirect('/login');
+                }
             }
         })
     })
@@ -98,7 +115,11 @@ exports.edit = (req,res) => {
         
         const catalog = req.params.catalog;
 
-        res.render('catalog-edit', {catalog,title:'catalogedit',layout:'grupa-main'});
+        if(req.user){
+            res.render('catalog-edit', {catalog,title:'catalogedit',layout:'grupa-main'});
+        } else {
+            res.redirect('/login');
+        }
 
         })
 }
@@ -123,9 +144,13 @@ exports.update = (req,res) => {
                 pool.getConnection((err, connection)=>{
                     if(err) throw err; //not connected
                     console.log('Connected as ID '+connection.threadId);
-                   
-                    res.render('catalog-edit', {alert: grupaFaraSpatii+' updated succesfully.',title:'catalogupdate',layout:'catalog-main'});
-            
+                    
+                    if(req.user){
+                        res.render('catalog-edit', {alert: grupaFaraSpatii+' updated succesfully.',title:'catalogupdate',layout:'catalog-main'});
+                    } else {
+                        res.redirect('/login');
+                    }
+
                     })   
             } else {
                 console.log(err);
@@ -157,7 +182,11 @@ exports.delete = (req,res) => {
 
             if(!err){
                 let removedUser = encodeURIComponent('User succesfully removed.');
-                res.redirect('/catalog?removed='+removedUser);
+                if(req.user){
+                    res.redirect('/catalog?removed='+removedUser);
+                } else {
+                    res.redirect('/login');
+                }
             } else {
                 console.log(err);
             }
@@ -183,7 +212,11 @@ exports.viewuser = (req,res)=>{
 
             if(!err){
                 let removedUser = req.query.removed;
-                res.render('grupa-home', {rows, removedUser,title:'orarhome',layout:'orar-main'});
+                if(req.user){
+                    res.render('grupa-home', {rows, removedUser,title:'orarhome',layout:'orar-main'});
+                } else {
+                    res.redirect('/login');
+                }
             } else {
                 console.log(err);
             }
@@ -193,3 +226,34 @@ exports.viewuser = (req,res)=>{
         })
     })
 }
+
+exports.isLoggedIn = async (req,res,next) => {
+
+    //console.log(req.cookies);
+    if ( req.cookies.jwt ){
+        try{
+            // 1) Verify the token. (make sure token exists, and see which user is this token from)
+            const decoded = await promisify(jwt.verify)(req.cookies.jwt,process.env.JWT_SECRET);
+            console.log(decoded);
+
+            // 2) Check if the user still exists.
+            pool.query('SELECT * FROM users WHERE id=?', [decoded.id], (error, result) =>{
+
+                console.log(result);
+
+                if(!result){
+                    return next();
+                }
+
+                req.user = result[0];
+                return next();
+            })
+
+        }catch(error){
+            console.log(error);
+            return next();
+        }
+    }else{
+        next(); 
+    }
+} 
