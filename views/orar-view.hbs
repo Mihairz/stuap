@@ -1,0 +1,52 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/orar">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">View orar</li>
+  </ol>
+</nav>
+
+<div class="view-user p-5">
+    {{#each rows}}
+    <div class="row mb-5">
+        <div class="col text-center">
+            <h3>{{this.facultate}} {{this.grupa}}</h3>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Facultate</th>
+                        <th scope="col">Grupa</th>
+                        <th scope="col">Profesor coordonator</th>
+                        <th scope="col">E-mail profesor coordonator</th>
+                        <th scope="col">Telefon profesor coordonator</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">{{this.facultate}}</th>
+                        <td>{{this.grupa}}</td>
+                        <td>{{this.profesor_coordonator}}</td>
+                        <td>{{this.email_profesor_coordonator}}</td>
+                        <td>{{this.telefon_profesor_coordonator}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+       <div class="row">
+            <div class="col">
+                <b>Orar</b>
+            </div>
+        </div>
+       <div class="row">
+            <div class="col" style="white-space: pre-line;">
+                {{this.orar}}
+            </div>
+        </div>
+    </div>
+    {{/each}}
+</div>

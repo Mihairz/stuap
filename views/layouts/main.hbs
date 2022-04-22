@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STUAp</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://kit.fontawesome.com/734c7d3ac6.js" crossorigin="anonymous"></script>
+</head> 
+<body>
+
+    <nav class="navbar">
+            
+        <div class="burger">
+            <div id="line1" class="block"></div>
+            <div id="line2" class="block"></div>
+            <div id="line3" class="block"></div>
+        </div>
+
+        <div id="nav-logo">
+            <a href="/index"><h4>STUAp</h4></a>
+        </div>
+
+        {{#if user}}
+            <ul class="nav-links">
+                <li><a href="/orar">ORAR</a></li>
+                <li><a href="/catalog">CATALOG</a></li>
+                <li><a href="#">SECRETARIAT</a></li>
+                <li><a href="#">BIBLIOTECA</a></li>
+                <li><a href="#">FINANCIAR</a></li>
+                <li><a href="#">ANUNTURI</a></li>
+                <li><a href="#">EVENIMENTE</a></li>
+                <li><a href="#">NOTITE</a></li>
+                <li><a href="/profile">PROFIL</a></li>
+            </ul>
+        {{else}}
+            <ul class="nav-links">
+                <li><a href="#">ABOUT</a></li>
+                <li><a href="/login">LOGIN</a></li>
+                <li><a href="/register">REGISTER</a></li>
+            </ul>
+        {{/if}}
+
+        <div>
+            <input type="checkbox" id="color-switch">
+            <label for="color-switch" class="label">
+                <i class="fas fa-moon"></i>
+                <i class="fas fa-sun"></i>
+                <div class="ball"></div>
+            </label>
+        </div>
+            
+    </nav>
+    <div class="header-colorbar"><span></span></div>
+
+    {{{body}}}
+
+    <br><br><br><br><br><br><br>
+    <div class="footer-colorbar"><span></span></div>
+    <footer><p>Footer</p></footer>
+
+    <script src="index.js"></script>
+
+</body>
+</html>

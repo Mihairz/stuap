@@ -1,0 +1,28 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/grupa/{{grupamea}}">Catalog {{grupamea}}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">View student</li>
+  </ol>
+</nav>
+
+<div class="view-user p-5">
+    {{#each rows}}
+    <div class="row mb-5">
+        <div class="col text-center">
+            <h3>{{this.nume}} {{this.prenume}} {{this.grupa}}</h3>
+        </div>
+    </div>
+
+       <div class="row">
+            <div class="col">
+                <b>Note</b>
+            </div>
+        </div>
+       <div class="row">
+            <div class="col" style="white-space: pre-line;">
+                {{this.note}}
+            </div>
+        </div>
+    </div>
+    {{/each}}
+</div>

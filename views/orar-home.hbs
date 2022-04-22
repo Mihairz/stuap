@@ -1,0 +1,48 @@
+
+{{#if removedUser}}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+Deleted succesfully.
+<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{{/if}}
+
+<div class="row">
+<div class="col-6"><h1>Orare</h1></div>
+<div class="col-6 d-flex justify-content-end">
+<a href="/orar-add" type="button" class="btn btn-primary align-self-center">+Add orar</a> 
+</div>
+</div>
+
+<table class="table table-bordered table-hover">
+<thead class="thead-dark">
+<tr>
+    <th scope="col">#</th>
+    <th scope="col">Facultate</th>
+    <th scope="col">Grupa</th>
+    <th scope="col">Profesor coordonator</th>
+    <th scope="col">E-mail profesor coordonator</th>
+    <th scope="col">Telefon profesor coordonator</th>
+    <th scope="col" class="text-end">Action</th>
+
+</tr>
+</thead>
+<tbody>
+
+{{#each rows}}
+<tr>
+    <th scope="row">{{this.id}}</th>
+    <td>{{this.facultate}}</td>
+    <td>{{this.grupa}}</td>
+    <td>{{this.profesor_coordonator}}</td>
+    <td>{{this.email_profesor_coordonator}}</td>
+    <td>{{this.telefon_profesor_coordonator}}</td>
+    <td class="text-end">
+        <a href="/orar-view/{{this.id}}" type="button" class="btn btn-light btn-small"><i class="bi bi-eye"></i>View</a>
+        <a href="/orar-edit/{{this.id}}" type="button" class="btn btn-light btn-small"><i class="bi bi-pencil"></i>Edit</a>
+        <a href="/orar-delete/{{this.id}}" type="button" class="btn btn-light btn-small"><i class="bi bi-person-x"></i>Delete</a>
+    </td>
+</tr>
+{{/each}}
+
+</tbody>
+</table>

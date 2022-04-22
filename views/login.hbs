@@ -1,0 +1,33 @@
+
+<br><br><br><br>
+<div class="formdiv">
+    <div class="loginform">
+        <div class="title">Login</div>
+        
+        <form action="/auth/login" method="POST">
+            <div class="input-container ic1">
+                <input id="email" class="input" type="email" name="email" placeholder=" ">
+                <div class="cut"></div>
+                <label for="email" class="placeholder">Email</label>
+            </div>
+
+            <div class="input-container ic2">
+                <input id="password" class="input" type="password" name="password" placeholder=" ">
+                <div class="cut"></div>
+                <label for="password" class="placeholder">Password</label>
+            </div>
+
+            <button type="submit" class="submit">Login</button>
+        </form>
+        
+        <br>
+        {{#if message}}
+            <h4 class="error-message">{{message}}</h4>
+        {{/if}}
+
+        <br>
+        <h3><a href="/register" class="register-link">Nu ai cont? Inregistreaza-te aici.</a></h3>
+    </div>
+</div>
+
+
