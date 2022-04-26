@@ -13,7 +13,7 @@
 {{/if}}
 
 {{#each rows}}
-<form class="row g-3 needs-validation" method="POST" action="/orar-edit/{{this.id}}" novalidate>
+<form class="row g-3 needs-validation" method="POST" action="/orar-edit/{{this.grupa}}/{{this.id}}" novalidate>
     {{> orar-form}}
 </form>
 {{/each}}

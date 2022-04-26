@@ -15,5 +15,4 @@ router.get('/catalog-view/:table',catalogController.isLoggedIn,catalogController
 
 router.get('/catalog-delete/:catalog',catalogController.isLoggedIn,catalogController.delete);
 
-
 module.exports = router;

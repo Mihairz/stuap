@@ -21,14 +21,9 @@ exports.view = (req,res)=>{
         if(err) throw err; //not connected
         console.log('Connected as ID '+connection.threadId);
         
-        console.log(req.params.grupa);
         
         const intero = ("SELECT * FROM ");
-        console.log(intero);
-
         const interogatie = intero + req.params.grupa;
-        console.log(interogatie);
-        
 
         //User the connection
         connection.query(interogatie, (err,rows)=>{
@@ -47,7 +42,7 @@ exports.view = (req,res)=>{
                 console.log(err);
             }
 
-            console.log("The data from grupa table: \n",rows)
+            //console.log("The data from grupa table: \n",rows)
 
         })
     })
@@ -78,7 +73,7 @@ exports.find = (req,res)=>{
                 console.log(err);
             }
 
-            console.log("The data from grupa table: \n",rows)
+            //console.log("The data from grupa table: \n",rows)
 
         })
     })
@@ -117,7 +112,7 @@ exports.create = (req,res)=>{
                 console.log(err);
             }
 
-            console.log("The data from grupa table: \n",rows)
+            //console.log("The data from grupa table: \n",rows)
 
         })
     })
@@ -148,7 +143,7 @@ exports.edit = (req,res) => {
                 console.log(err);
             }
 
-            console.log("The data from grupa table: \n",rows)
+            //console.log("The data from grupa table: \n",rows)
 
         })
     })
@@ -188,7 +183,7 @@ exports.update = (req,res) => {
                             console.log(err);
                         }
             
-                        console.log("The data from grupa table: \n",rows)
+                        //console.log("The data from grupa table: \n",rows)
             
                     })
                 })            
@@ -196,7 +191,7 @@ exports.update = (req,res) => {
                 console.log(err);
             }
 
-            console.log("The data from grupa table: \n",rows)
+            //console.log("The data from grupa table: \n",rows)
 
         })
     })
@@ -228,7 +223,7 @@ exports.delete = (req,res) => {
                 console.log(err); 
             }
 
-            console.log("The data from grupa table: \n",rows)
+            //console.log("The data from grupa table: \n",rows)
 
         })
 
@@ -260,7 +255,7 @@ exports.viewuser = (req,res)=>{
                 console.log(err);
             }
 
-            console.log("The data from grupa table: \n",rows)
+            //console.log("The data from grupa table: \n",rows)
 
         })
     })
@@ -278,7 +273,7 @@ exports.isLoggedIn = async (req,res,next) => {
             // 2) Check if the user still exists.
             pool.query('SELECT * FROM users WHERE id=?', [decoded.id], (error, result) =>{
 
-                console.log(result);
+                //console.log(result);
 
                 if(!result){
                     return next();

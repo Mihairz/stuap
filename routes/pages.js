@@ -17,7 +17,15 @@ router.get('/register', authController.isLoggedIn, (req,res) => {
     }else{
         res.redirect('/profile');
     }*/
-    res.render('register');
+    if(req.user){
+        if(req.user.admin){
+            res.render('register', {user:req.user});
+        } else {
+            res.redirect('/profile');
+        }
+    } else {
+        res.redirect('/login');
+    }
 });
 
 router.get('/login', (req,res) => {
@@ -42,12 +50,12 @@ router.post('/orar',orarController.isLoggedIn, orarController.find);
 router.get('/orar-add',orarController.isLoggedIn,orarController.form);
 router.post('/orar-add',orarController.isLoggedIn,orarController.create);
 
-router.get('/orar-edit/:id',orarController.isLoggedIn,orarController.edit);
-router.post('/orar-edit/:id',orarController.isLoggedIn,orarController.update);
+router.get('/orar-edit/:grupa/:id',orarController.isLoggedIn,orarController.edit);
+router.post('/orar-edit/:grupa/:id',orarController.isLoggedIn,orarController.update);
 
-router.get('/orar-view/:id',orarController.isLoggedIn,orarController.viewuser);
+router.get('/orar-view/:grupa',orarController.isLoggedIn,orarController.viewuser);
 
-router.get('/orar-delete/:id',orarController.isLoggedIn,orarController.delete);
+router.get('/orar-delete/:grupa/:id',orarController.isLoggedIn,orarController.delete);
 
 //Catalog
 const catalogController = require('../controllers/catalogController');
@@ -81,4 +89,13 @@ router.get('/grupa/:grupa/student-view/:id',grupaController.isLoggedIn,grupaCont
 
 router.get('/grupa/:grupa/student-delete/:id',grupaController.isLoggedIn,grupaController.delete); 
 
+
+//Student
+const studentController = require('../controllers/studentController');
+
+router.get('/student-orar/:grupa',studentController.isLoggedIn,studentController.viewOrar);
+
+router.get('/student-catalog/:grupa/:email',studentController.isLoggedIn,studentController.viewCatalog);
+
 module.exports = router;
+

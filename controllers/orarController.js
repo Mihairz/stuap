@@ -29,8 +29,12 @@ exports.view = (req,res)=>{
             if(!err){
                 let removedUser = req.query.removed;
 
-                if(req.user){
-                    res.render('orar-home', {rows, removedUser,title:'orarhome',layout:'orar-main'});
+                if(req.user){ 
+                    if(req.user.admin){
+                        res.render('orar-home', {rows, removedUser,title:'orarhome',layout:'orar-main'});
+                    } else {
+                        res.redirect('/student-orar/'+req.user.grupa);
+                    }
                 }
                 else{
                     res.redirect('/login');
@@ -40,7 +44,7 @@ exports.view = (req,res)=>{
                 console.log(err);
             }
 
-            console.log("The data from orar table: \n",rows)
+            //console.log("The data from orar table: \n",rows)
 
         })
     })
@@ -71,7 +75,7 @@ exports.find = (req,res)=>{
                 console.log(err);
             }
 
-            console.log("The data from orar table: \n",rows)
+            //console.log("The data from orar table: \n",rows)
 
         })
     })
@@ -90,6 +94,8 @@ exports.form = (req,res) => {
 exports.create = (req,res)=>{
     const{ facultate,grupa,profesor_coordonator,email_profesor_coordonator,telefon_profesor_coordonator,orar} = req.body;
 
+    const grupaLowercaseFaraSpatii = (grupa.replace(/ +/g, '')).toLowerCase();
+
     pool.getConnection((err, connection)=>{
         if(err) throw err; //not connected
         console.log('Connected as ID '+connection.threadId);
@@ -98,13 +104,13 @@ exports.create = (req,res)=>{
         
 
         //User the connection
-        connection.query('INSERT INTO orar SET facultate = ?, grupa =?, profesor_coordonator = ?, email_profesor_coordonator = ?, telefon_profesor_coordonator = ?, orar = ?', [facultate, grupa, profesor_coordonator,email_profesor_coordonator,telefon_profesor_coordonator,orar],(err,rows)=>{
+        connection.query('INSERT INTO orar SET facultate = ?, grupa =?, profesor_coordonator = ?, email_profesor_coordonator = ?, telefon_profesor_coordonator = ?, orar = ?', [facultate, grupaLowercaseFaraSpatii, profesor_coordonator,email_profesor_coordonator,telefon_profesor_coordonator,orar],(err,rows)=>{
             //When done with the connection, release it
             connection.release();
 
             if(!err){
                 if(req.user){
-                    res.render('orar-add',{alert:'Grupa '+grupa+' has been added succesfully.',title:'orarnew',layout:'orar-main'});
+                    res.render('orar-add',{alert:'Grupa '+grupaLowercaseFaraSpatii+' has been added succesfully.',title:'orarnew',layout:'orar-main'});
                 } else{
                     res.redirect('/login');
                 }
@@ -112,12 +118,12 @@ exports.create = (req,res)=>{
                 console.log(err);
             }
 
-            console.log("The data from orar table: \n",rows)
+            //console.log("The data from orar table: \n",rows)
 
         })
 
-        //Creeaza automat grupa si pentru catalog
-        connection.query('CREATE TABLE `?` ( `id` INT NOT NULL AUTO_INCREMENT , `nume` VARCHAR(10) NOT NULL , `prenume` VARCHAR(30) NOT NULL , `note` TEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB; ',[grupa],(err)=>{
+        //Creeaza automat tabel cu grupa pentru baza de date
+        connection.query('CREATE TABLE `'+grupaLowercaseFaraSpatii+'` ( `id` INT NOT NULL AUTO_INCREMENT ,`grupa` VARCHAR(10) NOT NULL,`nume` VARCHAR(10) NOT NULL , `prenume` VARCHAR(30) NOT NULL ,`email` VARCHAR(30) NOT NULL, `note` TEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB; ',(err)=>{
             if(err){
                 console.log(err)}
             else{
@@ -135,7 +141,7 @@ exports.edit = (req,res) => {
         console.log('Connected as ID '+connection.threadId);
 
         //User the connection
-        connection.query('SELECT * FROM orar WHERE id = ?',[req.params.id], (err,rows)=>{
+        connection.query('SELECT * FROM orar WHERE grupa = ?',[req.params.grupa], (err,rows)=>{
             //When done with the connection, release it
             connection.release();
 
@@ -149,7 +155,7 @@ exports.edit = (req,res) => {
                 console.log(err);
             }
 
-            console.log("The data from orar table: \n",rows)
+            //console.log("The data from orar table: \n",rows)
 
         })
     })
@@ -159,12 +165,14 @@ exports.edit = (req,res) => {
 exports.update = (req,res) => {
     const{ facultate,grupa,profesor_coordonator,email_profesor_coordonator,telefon_profesor_coordonator,orar} = req.body;
 
+    const grupaLowercaseFaraSpatii = (grupa.replace(/ +/g, '')).toLowerCase();
+
     pool.getConnection((err, connection)=>{
         if(err) throw err; //not connected
         console.log('Connected as ID '+connection.threadId);
 
         //User the connection
-        connection.query('UPDATE orar SET facultate= ?,grupa= ?,profesor_coordonator= ?,email_profesor_coordonator= ?,telefon_profesor_coordonator= ?,orar= ? WHERE id = ?',[facultate,grupa,profesor_coordonator,email_profesor_coordonator,telefon_profesor_coordonator,orar,req.params.id], (err,rows)=>{
+        connection.query('UPDATE orar SET facultate= ?,grupa= ?,profesor_coordonator= ?,email_profesor_coordonator= ?,telefon_profesor_coordonator= ?,orar= ? WHERE id = ?',[facultate,grupaLowercaseFaraSpatii,profesor_coordonator,email_profesor_coordonator,telefon_profesor_coordonator,orar,req.params.id], (err,rows)=>{
             //When done with the connection, release it
             connection.release();
 
@@ -174,13 +182,13 @@ exports.update = (req,res) => {
                     console.log('Connected as ID '+connection.threadId);
             
                     //User the connection
-                    connection.query('SELECT * FROM orar WHERE id = ?',[req.params.id], (err,rows)=>{
+                    connection.query('SELECT * FROM orar WHERE grupa = ?',[req.params.grupa], (err,rows)=>{
                         //When done with the connection, release it
                         connection.release();
             
                         if(!err){
                             if(req.user){
-                                res.render('orar-edit', {rows, alert:'Grupa '+grupa+', from '+facultate+' has been updated.',title:'orarupdate',layout:'orar-main'});
+                                res.render('orar-edit', {rows, alert:'Grupa '+grupaLowercaseFaraSpatii+', from '+facultate+' has been updated.',title:'orarupdate',layout:'orar-main'});
                             } else {
                                 res.redirect('/login');
                             }
@@ -188,7 +196,7 @@ exports.update = (req,res) => {
                             console.log(err);
                         }
             
-                        console.log("The data from orar table: \n",rows)
+                        //console.log("The data from orar table: \n",rows)
             
                     })
                 })            
@@ -196,25 +204,28 @@ exports.update = (req,res) => {
                 console.log(err);
             }
 
-            console.log("The data from orar table: \n",rows)
+            //console.log("The data from orar table: \n",rows)
 
         })
+
+
+        connection.query('ALTER TABLE '+req.params.grupa+' RENAME TO '+grupaLowercaseFaraSpatii, 
+        (err)=>{if(err){console.log(err)}}
+        )
+
+
+
     })
 }
 
 //Delete user
 exports.delete = (req,res) => {
-    const grupa = req.body.grupa;
+    
+    
 
     pool.getConnection((err, connection)=>{
         if(err) throw err; //not connected
         console.log('Connected as ID '+connection.threadId);
-
-        
-
-        connection.query(' DROP TABLE ` ? ` ',[grupa],(err,ok)=>{
-            if(err){console.log(err);}
-        })
  
         //User the connection
         connection.query('DELETE FROM orar WHERE id = ?',[req.params.id], (err,rows)=>{
@@ -232,8 +243,12 @@ exports.delete = (req,res) => {
                 console.log(err); 
             }
 
-            console.log("The data from orar table: \n",rows)
+            //console.log("The data from orar table: \n",rows)
 
+        })
+
+        connection.query(' DROP TABLE `'+[req.params.grupa]+'` ',(err,ok)=>{
+            if(err){console.log(err);}
         })
 
         
@@ -248,13 +263,17 @@ exports.viewuser = (req,res)=>{
         console.log('Connected as ID '+connection.threadId);
 
         //User the connection
-        connection.query('SELECT * FROM orar WHERE id = ?',[req.params.id], (err,rows)=>{
+        connection.query('SELECT * FROM orar WHERE grupa = ?',[req.params.grupa], (err,rows)=>{
             //When done with the connection, release it
             connection.release();
 
             if(!err){
                 if(req.user){
-                    res.render('orar-view', {rows,title:'orarview',layout:'orar-main'});
+                    if(req.user.admin){
+                        res.render('orar-view', {rows,title:'orarview',layout:'orar-main'});
+                    } else {
+                        res.redirect('/student-orar/'+req.params.grupa);
+                    }
                 }
                 else{
                     res.redirect('/login');
@@ -263,7 +282,7 @@ exports.viewuser = (req,res)=>{
                 console.log(err);
             }
 
-            console.log("The data from orar table: \n",rows)
+            //console.log("The data from orar table: \n",rows)
 
         })
     })
@@ -281,7 +300,7 @@ exports.isLoggedIn = async (req,res,next) => {
             // 2) Check if the user still exists.
             pool.query('SELECT * FROM users WHERE id=?', [decoded.id], (error, result) =>{
 
-                console.log(result);
+                //console.log(result);
 
                 if(!result){
                     return next();

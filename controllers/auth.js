@@ -23,7 +23,7 @@ exports.login = async (req,res) => {
         }
 
         db.query('SELECT * FROM users WHERE email = ?', [email], async (error, results) => {
-            console.log(results);
+            
             if( !results[0] || !(await bcrypt.compare(password, results[0].password)) ) {
               res.status(401).render('login', {
                 message: 'Email or Password is incorrect'
@@ -56,19 +56,22 @@ exports.login = async (req,res) => {
 }
 
 exports.register = (req,res)=>{
-    console.log(req.body);
+    //console.log(req.body);
 
     //const name = req.body.name;
     //const email = req.body.email;
     //const password = req.body.password;
     //const passwordConfirm = req.body.passwordConfirm;
-    const {name, email, password, passwordConfirm} = req.body;
+    const {facultate, grupa, name, prenume, email, password, passwordConfirm} = req.body;
 
-    if (!name || !email || !password || !passwordConfirm){
+    if (!facultate || !grupa || !name || !prenume || !email || !password || !passwordConfirm){
         return res.render('register',{
             message:'Te rog sa introduci toate datele necesare.'
         })
     }else{
+
+        const grupaLowercaseFaraSpatii = (grupa.replace(/ +/g, '')).toLowerCase();
+
         db.query('SELECT email FROM users WHERE email = ?', [email], async (error,results) => {
             if(error){
                 console.log(error);
@@ -88,17 +91,32 @@ exports.register = (req,res)=>{
             let hashedPassword = await bcrypt.hash(password, 8);
             console.log(hashedPassword);
 
-            db.query('INSERT INTO users SET ?', {name:name, email:email, password:hashedPassword},
+            db.query('INSERT INTO users SET ?', {facultate:facultate,grupa:grupaLowercaseFaraSpatii,name:name,prenume:prenume, email:email, password:hashedPassword},
                 (error, results) => { 
                     if(error){console.log(error)}
                     else{
-                        console.log(results);
-                        return res.render('register',{
-                            succesMessage:'User registered succesfully.'
+                        return res.render('register',{succesMessage:'User registered succesfully.'
                         })
                     }
                 }
-            )      
+            )
+            
+            db.query ('SELECT * FROM orar WHERE grupa = ?',[grupaLowercaseFaraSpatii], (error,results)=>{
+                if(!error){
+
+                    if(results.length == 0){
+
+                        db.query('INSERT INTO orar SET facultate = ?, grupa =?', [facultate, grupaLowercaseFaraSpatii], (err)=>{
+                            if(err){console.log(err)}
+                        })
+
+                        db.query('CREATE TABLE `'+grupaLowercaseFaraSpatii+'` ( `id` INT NOT NULL AUTO_INCREMENT ,`grupa` VARCHAR(10) NOT NULL,`nume` VARCHAR(10) NOT NULL , `prenume` VARCHAR(30) NOT NULL ,`email` VARCHAR(30) NOT NULL, `note` TEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB; ',(err)=>{
+                            if(err){console.log(err)}
+                        })
+                    } 
+                    
+                } else (console.log(error))
+            })                    
         })
     }
 }
@@ -117,7 +135,7 @@ exports.isLoggedIn = async (req,res,next) => {
             // 2) Check if the user still exists.
             db.query('SELECT * FROM users WHERE id=?', [decoded.id], (error, result) =>{
 
-                console.log(result);
+                //console.log(result);
 
                 if(!result){
                     return next();

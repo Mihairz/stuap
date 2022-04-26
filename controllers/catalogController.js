@@ -25,10 +25,22 @@ exports.view = (req,res)=>{
             //When done with the connection, release it
             connection.release();
 
+            //console.log("ROWS INAINTE:",rows);
+            for (var key in rows){
+                if (rows[key].TABLE_NAME == "orar" || rows[key].TABLE_NAME == "users"){
+                    delete rows[key];
+                }
+            }
+            //console.log("ROWS DUPA:",rows)
+
             if(!err){
                 let removedUser = req.query.removed;
                 if(req.user){
-                    res.render('catalog-home', {rows, removedUser,title:'cataloghome',layout:'catalog-main'});
+                    if(req.user.admin){
+                        res.render('catalog-home', {rows, removedUser,title:'cataloghome',layout:'catalog-main'});
+                    } else {
+                        res.redirect('/student-catalog/'+req.user.grupa+'/'+req.user.email);
+                    }
                 } else {
                     res.redirect('/login');
                 }
@@ -36,7 +48,7 @@ exports.view = (req,res)=>{
                 console.log(err);
             }
 
-            console.log("The data from catalog table: \n",rows)
+            //console.log("The data from catalog table: \n",rows)
 
         })
     })
@@ -66,7 +78,7 @@ exports.find = (req,res)=>{
                 console.log(err);
             }
 
-            console.log("The data from catalog table: \n",rows)
+            //console.log("The data from catalog table: \n",rows)
 
         })
     })
@@ -83,7 +95,8 @@ exports.form = (req,res) => {
 //Add new user
 exports.create = (req,res)=>{
     const{grupa} = req.body;
-    const grupaFaraSpatii = grupa.replace(/ +/g, '');
+    const grupaLowercaseFaraSpatii = (grupa.replace(/ +/g, '')).toLowerCase();
+    
     
     pool.getConnection((err, connection)=>{
         if(err) throw err; //not connected
@@ -91,16 +104,25 @@ exports.create = (req,res)=>{
 
         let searchTerm = req.body.search;
 
-        connection.query('CREATE TABLE `'+grupaFaraSpatii+'` ( `id` INT NOT NULL AUTO_INCREMENT ,`grupa` VARCHAR(10) NOT NULL ,`nume` VARCHAR(10) NOT NULL , `prenume` VARCHAR(30) NOT NULL ,`email` VARCHAR(30) NOT NULL, `note` TEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB; ',(err)=>{
+        connection.query('CREATE TABLE `'+grupaLowercaseFaraSpatii+'` ( `id` INT NOT NULL AUTO_INCREMENT ,`grupa` VARCHAR(10) NOT NULL ,`nume` VARCHAR(10) NOT NULL , `prenume` VARCHAR(30) NOT NULL ,`email` VARCHAR(30) NOT NULL, `note` TEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB; ',(err)=>{
             if(err){
                 console.log(err)}
             else{
                 console.log("Tabel creat.")
                 if(req.user){
-                    res.render('catalog-add',{alert: grupaFaraSpatii+' added succesfully.',title:'catalognew',layout:'catalog-main'});
+                    res.render('catalog-add',{alert: grupaLowercaseFaraSpatii+' added succesfully.',title:'catalognew',layout:'catalog-main'});
                 } else {
                     res.redirect('/login');
                 }
+            }
+        })
+
+        //Creeaza automat si intrare in tabelul orare
+        connection.query('INSERT INTO orar SET grupa=?', [grupaLowercaseFaraSpatii],(err)=>{
+            if(err){
+                console.log(err)}
+            else{
+                console.log("Intrare in tabelul orar creata.");
             }
         })
     })
@@ -115,55 +137,67 @@ exports.edit = (req,res) => {
         
         const catalog = req.params.catalog;
 
-        if(req.user){
-            res.render('catalog-edit', {catalog,title:'catalogedit',layout:'grupa-main'});
+        if(catalog == "orar" || catalog == "users"){
+            res.redirect('/catalog');
         } else {
-            res.redirect('/login');
+            if(req.user){
+                res.render('catalog-edit', {catalog,title:'catalogedit',layout:'grupa-main'});
+            } else {
+                res.redirect('/login');
+            }
         }
 
-        })
+    })
 }
 
 //Update user
 exports.update = (req,res) => {
-    const{grupa} = req.body;
-    const grupaFaraSpatii = grupa.replace(/ +/g, '');
 
     pool.getConnection((err, connection)=>{
         if(err) throw err; //not connected
         console.log('Connected as ID '+connection.threadId);
 
-        const interogatie = ('ALTER TABLE '+req.params.catalog+' RENAME TO '+grupaFaraSpatii); 
+        if(req.params.catalog == "orar" || req.params.catalog == "users"){
+            res.redirect('/catalog');
+        } else {
 
-        //User the connection
-        connection.query(interogatie, (err,rows)=>{
-            //When done with the connection, release it
-            connection.release();
+            const grupaLowercaseFaraSpatii = ((req.body.grupa).replace(/ +/g, '')).toLowerCase();
+            
+            const interogatie = ('ALTER TABLE '+req.params.catalog+' RENAME TO '+grupaLowercaseFaraSpatii); 
 
-            if(!err){
-                pool.getConnection((err, connection)=>{
-                    if(err) throw err; //not connected
-                    console.log('Connected as ID '+connection.threadId);
-                    
-                    if(req.user){
-                        res.render('catalog-edit', {alert: grupaFaraSpatii+' updated succesfully.',title:'catalogupdate',layout:'catalog-main'});
-                    } else {
-                        res.redirect('/login');
-                    }
+            //User the connection
+            connection.query(interogatie, (err,rows)=>{
+                //When done with the connection, release it
+                connection.release();
 
-                    })   
-            } else {
-                console.log(err);
-            }
+                if(!err){
+                    pool.getConnection((err, connection)=>{
+                        if(err) throw err; //not connected
+                        console.log('Connected as ID '+connection.threadId);
+                        
+                        if(req.user){
+                            res.render('catalog-edit', {alert: grupaLowercaseFaraSpatii+' updated succesfully.',title:'catalogupdate',layout:'catalog-main'});
+                        } else {
+                            res.redirect('/login');
+                        }
 
-            console.log("The data from catalog table: \n",rows)
+                        })   
+                } else {
+                    console.log(err);
+                }
 
-        })
+                //console.log("The data from catalog table: \n",rows)
 
-        connection.query('UPDATE '+grupaFaraSpatii+' SET grupa= ? ',[grupaFaraSpatii], (err)=>{
-            if(err){console.log(err)}
-            else{console.log("Updated succesfully.")}
-        })    
+            })
+
+            connection.query('UPDATE orar SET grupa= ? WHERE grupa = ?',[grupaLowercaseFaraSpatii, req.params.catalog], (err)=>{
+                if(err){console.log(err)}
+                else{console.log("Updated succesfully.")}
+            })    
+
+        }
+
+        
     })
 }
 
@@ -175,24 +209,32 @@ exports.delete = (req,res) => {
         if(err) throw err; //not connected
         console.log('Connected as ID '+connection.threadId);
 
-        //User the connection
-        connection.query('DROP TABLE `'+req.params.catalog+'`', (err,rows)=>{
-            //When done with the connection, release it
-            connection.release();
+        if(req.params.catalog == "orar" || req.params.catalog == "users"){
+            res.redirect('/catalog');
+        } else {
+            //User the connection
+            connection.query('DROP TABLE `'+req.params.catalog+'`', (err,rows)=>{
+                //When done with the connection, release it
+                connection.release();
 
-            if(!err){
-                let removedUser = encodeURIComponent('User succesfully removed.');
-                if(req.user){
-                    res.redirect('/catalog?removed='+removedUser);
+                if(!err){
+                    let removedUser = encodeURIComponent('User succesfully removed.');
+                    if(req.user){
+                        res.redirect('/catalog?removed='+removedUser);
+                    } else {
+                        res.redirect('/login');
+                    }
                 } else {
-                    res.redirect('/login');
+                    console.log(err);
                 }
-            } else {
-                console.log(err);
-            }
 
-            console.log("The data from catalog table: \n",rows)
-        })
+                //console.log("The data from catalog table: \n",rows)
+            })
+
+            connection.query('DELETE FROM orar WHERE grupa = ?',[req.params.catalog], (err,ok)=>{
+                if(err){console.log(err);}
+            })
+        }   
     })
 }
 
@@ -204,26 +246,30 @@ exports.viewuser = (req,res)=>{
         if(err) throw err; //not connected
         console.log('Connected as ID '+connection.threadId);
         
-       
-        //User the connection
-        connection.query('SELECT * FROM ?',[req.params.table], (err,rows)=>{
-            //When done with the connection, release it
-            connection.release();
+        if(req.params.catalog == "orar" || req.params.catalog == "users"){
+            res.redirect('/catalog');
+        } else {
+            
+            //User the connection
+            connection.query('SELECT * FROM ?',[req.params.table], (err,rows)=>{
+                //When done with the connection, release it
+                connection.release();
 
-            if(!err){
-                let removedUser = req.query.removed;
-                if(req.user){
-                    res.render('grupa-home', {rows, removedUser,title:'orarhome',layout:'orar-main'});
+                if(!err){
+                    let removedUser = req.query.removed;
+                    if(req.user){
+                        res.render('grupa-home', {rows, removedUser,title:'cataloghome',layout:'catalog-main'});
+                    } else {
+                        res.redirect('/login');
+                    }
                 } else {
-                    res.redirect('/login');
+                    console.log(err);
                 }
-            } else {
-                console.log(err);
-            }
 
-            console.log("The data from orar table: \n",rows)
+                //console.log("The data from catalog table: \n",rows)
 
-        })
+            })
+        }
     })
 }
 
@@ -239,7 +285,7 @@ exports.isLoggedIn = async (req,res,next) => {
             // 2) Check if the user still exists.
             pool.query('SELECT * FROM users WHERE id=?', [decoded.id], (error, result) =>{
 
-                console.log(result);
+                //console.log(result);
 
                 if(!result){
                     return next();
