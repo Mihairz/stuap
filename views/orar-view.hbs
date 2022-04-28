@@ -41,11 +41,20 @@
             <div class="col">
                 <b>Orar</b>
             </div>
+            <div class="col">
+                <b>Studenti</b>
+            </div>
         </div>
        <div class="row">
             <div class="col" style="white-space: pre-line;">
                 {{this.orar}}
             </div>
+            {{#each studenti}}
+                <div class="col" style="white-space: pre-line;">
+                    {{studenti.nume}}
+                    {{studenti.prenume}}
+                </div>
+            {{/each}}
         </div>
     </div>
     {{/each}}

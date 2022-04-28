@@ -68,6 +68,12 @@ exports.find = (req,res)=>{
             //When done with the connection, release it
             connection.release();
 
+            for (var key in rows){
+                if (rows[key].TABLE_NAME == "orar" || rows[key].TABLE_NAME == "users"){
+                    delete rows[key];
+                }
+            }
+
             if(!err){
                 if(req.user){
                     res.render('catalog-home', {rows,title:'catalogfind',layout:'catalog-main'});
@@ -104,7 +110,7 @@ exports.create = (req,res)=>{
 
         let searchTerm = req.body.search;
 
-        connection.query('CREATE TABLE `'+grupaLowercaseFaraSpatii+'` ( `id` INT NOT NULL AUTO_INCREMENT ,`grupa` VARCHAR(10) NOT NULL ,`nume` VARCHAR(10) NOT NULL , `prenume` VARCHAR(30) NOT NULL ,`email` VARCHAR(30) NOT NULL, `note` TEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB; ',(err)=>{
+        connection.query('CREATE TABLE `'+grupaLowercaseFaraSpatii+'` ( `id` INT NOT NULL AUTO_INCREMENT ,`facultate` VARCHAR(10) NOT NULL,`grupa` VARCHAR(10) NOT NULL ,`nume` VARCHAR(10) NOT NULL , `prenume` VARCHAR(30) NOT NULL ,`email` VARCHAR(30) NOT NULL,`telefon` VARCHAR(10) NOT NULL, `note` TEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB; ',(err)=>{
             if(err){
                 console.log(err)}
             else{
@@ -162,6 +168,9 @@ exports.update = (req,res) => {
         } else {
 
             const grupaLowercaseFaraSpatii = ((req.body.grupa).replace(/ +/g, '')).toLowerCase();
+
+            connection.query('UPDATE '+req.params.catalog+' SET grupa =?',[grupaLowercaseFaraSpatii],(err)=>{if(err){console.log(err)}})
+            connection.query('UPDATE users SET grupa=? WHERE grupa = ?',[grupaLowercaseFaraSpatii,req.params.catalog],(err)=>{if(err){console.log(err)}})
             
             const interogatie = ('ALTER TABLE '+req.params.catalog+' RENAME TO '+grupaLowercaseFaraSpatii); 
 
@@ -234,6 +243,8 @@ exports.delete = (req,res) => {
             connection.query('DELETE FROM orar WHERE grupa = ?',[req.params.catalog], (err,ok)=>{
                 if(err){console.log(err);}
             })
+
+            connection.query('DELETE FROM users WHERE grupa =?',[req.params.catalog],(err)=>{if(err){console.log(err)}})
         }   
     })
 }

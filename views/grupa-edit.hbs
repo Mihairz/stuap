@@ -11,6 +11,12 @@
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 {{/if}}
+{{#if message}}
+    <h4 class="error-message">{{message}}</h4>
+{{/if}}
+{{#if succesMessage}}
+    <h4 class="error-message">{{succesMessage}}<h3>
+{{/if}}
 
 {{#each rows}}
 <form class="row g-3 needs-validation" method="POST" action="/grupa/{{this.grupa}}/student-edit/{{this.id}}" novalidate>

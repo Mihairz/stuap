@@ -12,6 +12,7 @@ const pool = mysql.createPool({
 
 const jwt = require ('jsonwebtoken');
 const { promisify } = require('util');
+const bcrypt = require ('bcryptjs');
 
 
 //view users
@@ -88,36 +89,66 @@ exports.form = (req,res) => {
 
 //Add new user
 exports.create = (req,res)=>{
-    const{ nume,prenume,email,note} = req.body;
+
+    const{ nume,prenume,email,note,financiar,password,passwordConfirm} = req.body;
 
     pool.getConnection((err, connection)=>{
         if(err) throw err; //not connected
         console.log('Connected as ID '+connection.threadId);
 
         let searchTerm = req.body.search;
-        
-        //User the connection
-        connection.query('INSERT INTO '+req.params.grupa+' SET grupa = ?, nume =?, prenume = ?, email = ?, note = ?', [req.params.grupa, nume, prenume, email, note],(err,rows)=>{
-            //When done with the connection, release it
-            connection.release();
 
-            if(!err){
-                const grupamea = req.params.grupa;
-                if (req.user){
-                    res.render('grupa-add',{grupamea,alert:'Student '+nume+' '+prenume+' has been added succesfully.',title:'grupanew',layout:'grupa-main'});
-                } else {
-                    res.redirect('/login');
+        if (!nume || !prenume || !email || !password || !passwordConfirm){
+            return res.render('grupa-add',{message:'Te rog sa introduci toate datele necesare.'})
+        } else {
+            connection.query('SELECT email FROM users WHERE email = ?', [email], async (error,results) => {
+                if(error){
+                    console.log(error);
                 }
-            } else {
-                console.log(err);
-            }
 
-            //console.log("The data from grupa table: \n",rows)
+                if( results.length > 0){
+                    return res.render('grupa-add',{
+                        message:'Email is already taken'
+                    })
+                }
+                else if (password !== passwordConfirm){
+                    return res.render('grupa-add',{
+                        message:'Passwords do not match.'
+                    })
+                }
 
-        })
+                let hashedPassword = await bcrypt.hash(password, 8);
+                console.log("Hashed password: ",hashedPassword);
+
+
+                connection.query('INSERT INTO '+req.params.grupa+' SET grupa = ?, nume =?, prenume = ?, email = ?, note = ?, financiar = ?', [req.params.grupa, nume, prenume, email, note,financiar],(err,rows)=>{if(err){console.log(err)} })
+
+                connection.query('SELECT * FROM orar WHERE grupa = ?',[req.params.grupa],(err,results)=>{
+                    if(err){console.log(err)}
+                    else{
+                        connection.query('UPDATE '+req.params.grupa+' SET facultate = ? WHERE email = ?',[results[0].facultate, email],(err)=>{
+                            if(err){console.log(err)}
+                        })
+
+                        connection.query('INSERT INTO users SET ?', {facultate:results[0].facultate,grupa:req.params.grupa,name:nume,prenume:prenume, email:email, password:hashedPassword},
+                        (error, results) => { 
+                            if(error){console.log(error)}
+                            else{
+                                const grupamea = req.params.grupa;
+                                if (req.user){
+                                    res.render('grupa-add',{grupamea,alert:'Student '+nume+' '+prenume+' has been added succesfully.',title:'grupanew',layout:'grupa-main'});
+                                } else {
+                                    res.redirect('/login');
+                                }
+                            }
+                        })
+                    }
+                })
+                    
+            })
+        }
     })
-}
-
+}    
 //Edit user
 exports.edit = (req,res) => {
 
@@ -151,49 +182,75 @@ exports.edit = (req,res) => {
 
 //Update user
 exports.update = (req,res) => {
-    const{ nume,prenume,email,note} = req.body;
+    const{ nume,prenume,email,note,financiar,password,passwordConfirm} = req.body;
+
+    
 
     pool.getConnection((err, connection)=>{
         if(err) throw err; //not connected
         console.log('Connected as ID '+connection.threadId);
 
-        //User the connection
-        connection.query('UPDATE '+req.params.grupa+' SET grupa= ?,nume= ?,prenume = ?,email= ?,note= ? WHERE id = ?', [req.params.grupa,nume,prenume,email,note,req.params.id], (err,rows)=>{
-            //When done with the connection, release it
-            connection.release();
-
-            if(!err){
-                pool.getConnection((err, connection)=>{
-                    if(err) throw err; //not connected
-                    console.log('Connected as ID '+connection.threadId);
-            
-                    //User the connection
-                    connection.query('SELECT * FROM '+req.params.grupa+' WHERE id = ?',[req.params.id], (err,rows)=>{
-                        //When done with the connection, release it
-                        connection.release();
-            
-                        if(!err){
-                            const grupamea = req.params.grupa;
-                            if (req.user){
-                                res.render('grupa-edit', {rows,grupamea, alert:'Student '+nume+' '+prenume+' has been updated succesfully.',title:'grupaupdate',layout:'grupa-main'});
-                            } else {
-                                res.redirect('/login');
-                            }
-                        } else {
-                            console.log(err);
-                        }
-            
-                        //console.log("The data from grupa table: \n",rows)
-            
-                    })
-                })            
-            } else {
-                console.log(err);
+        connection.query('SELECT email FROM users WHERE email = ?', [email], async (error,results) => {
+            if(error){
+                console.log(error);
             }
 
-            //console.log("The data from grupa table: \n",rows)
+            if( results.length > 1){
+                return res.render('grupa-edit',{
+                    message:'Email is already taken'
+                })
+            }
+            else if (password !== passwordConfirm){
+                return res.render('grupa-edit',{
+                    message:'Passwords do not match.'
+                })
+            }
 
+            let hashedPassword = await bcrypt.hash(password, 8);
+            console.log("Hashed password: ",hashedPassword);
+
+            connection.query('UPDATE users SET name= ?,prenume = ?,email= ?,password = ? WHERE email = ?',[nume,prenume,email,hashedPassword,email],(err)=>{if(err){console.log(err)}})
+
+            connection.query('UPDATE '+req.params.grupa+' SET grupa= ?,nume= ?,prenume = ?,email= ?,note= ?,financiar = ? WHERE id = ?', [req.params.grupa,nume,prenume,email,note,financiar,req.params.id], (err,rows)=>{
+                //When done with the connection, release it
+                connection.release();
+    
+                if(!err){
+                    pool.getConnection((err, connection)=>{
+                        if(err) throw err; //not connected
+                        console.log('Connected as ID '+connection.threadId);
+                
+                        //User the connection
+                        connection.query('SELECT * FROM '+req.params.grupa+' WHERE id = ?',[req.params.id], (err,rows)=>{
+                            //When done with the connection, release it
+                            connection.release();
+                
+                            if(!err){
+                                const grupamea = req.params.grupa;
+                                if (req.user){
+                                    res.render('grupa-edit', {rows,grupamea, alert:'Student '+nume+' '+prenume+' has been updated succesfully.',title:'grupaupdate',layout:'grupa-main'});
+                                } else {
+                                    res.redirect('/login');
+                                }
+                            } else {
+                                console.log(err);
+                            }
+                
+                            //console.log("The data from grupa table: \n",rows)
+                
+                        })
+                    })            
+                } else {
+                    console.log(err);
+                }
+    
+                //console.log("The data from grupa table: \n",rows)
+    
+            })
         })
+
+        //User the connection
+        
     })
 }
 
@@ -204,10 +261,12 @@ exports.delete = (req,res) => {
         if(err) throw err; //not connected
         console.log('Connected as ID '+connection.threadId);
 
-        const interogatie = ('DELETE FROM '+req.params.grupa+' WHERE id = ?');
+        connection.query('DELETE FROM users WHERE email = ?',[req.params.email],(err)=>{if(err){console.log(err)}})
+
+        const interogatie = ('DELETE FROM '+req.params.grupa+' WHERE email = ?');
  
         //User the connection
-        connection.query(interogatie,[req.params.id], (err,rows)=>{
+        connection.query(interogatie,[req.params.email], (err,rows)=>{
             //When done with the connection, release it
             connection.release();
 

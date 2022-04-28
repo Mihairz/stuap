@@ -56,7 +56,10 @@ exports.viewCatalog = (req,res)=>{
         if(err) throw err; //not connected
         console.log('Connected as ID '+connection.threadId);
 
-        const interogatie = ('SELECT * FROM '+req.params.grupa+' WHERE email = ?');
+        connection.query('SELECT * FROM orar WHERE grupa=?',[req.params.grupa],(error,prof)=>{
+            if(err){console.log(error)}
+            else{
+                const interogatie = ('SELECT * FROM '+req.params.grupa+' WHERE email = ?');
         //User the connection
         connection.query(interogatie,[req.params.email], (err,rows)=>{
             //When done with the connection, release it
@@ -66,7 +69,7 @@ exports.viewCatalog = (req,res)=>{
                 if (req.user){
                     if(req.user.grupa == req.params.grupa){
                         if(req.user.email == req.params.email){
-                            res.render('student-catalog', {rows,title:'student-catalog',layout:'student-catalog-main'});
+                            res.render('student-catalog', {rows,prof,title:'student-catalog',layout:'student-catalog-main'});
                         } else {
                             res.redirect('/student-catalog/'+req.user.grupa+'/'+req.user.email);
                         }
@@ -87,6 +90,54 @@ exports.viewCatalog = (req,res)=>{
             //console.log("The data from grupa table: \n",rows)
 
         })
+            }
+        })
+        
+    })
+}
+
+exports.viewFinanciar = (req,res)=>{
+
+    pool.getConnection((err, connection)=>{
+        if(err) throw err; //not connected
+        console.log('Connected as ID '+connection.threadId);
+
+        connection.query('SELECT * FROM orar WHERE grupa=?',[req.params.grupa],(error,prof)=>{
+            if(err){console.log(error)}
+            else{
+                const interogatie = ('SELECT * FROM '+req.params.grupa+' WHERE email = ?');
+                //User the connection
+                connection.query(interogatie,[req.params.email], (err,rows)=>{
+                    //When done with the connection, release it
+                    connection.release();
+                    
+                    if(!err){
+                        if (req.user){
+                            if(req.user.grupa == req.params.grupa){
+                                if(req.user.email == req.params.email){
+                                    res.render('student-financiar', {rows,prof,title:'student-financiar',layout:'student-financiar-main'});
+                                } else {
+                                    res.redirect('/student-financiar/'+req.user.grupa+'/'+req.user.email);
+                                }
+                            }else{
+                                if(req.user.admin){
+                                    res.redirect('/financiar')
+                                }else{
+                                    res.redirect('/student-financiar/'+req.user.grupa+'/'+req.user.email);
+                                }
+                            }    
+                        } else {
+                            res.redirect('/login');
+                        }
+                    } else {
+                        console.log(err);
+                    }
+
+                    //console.log("The data from grupa table: \n",rows)
+                })
+            }
+        })
+        
     })
 }
 

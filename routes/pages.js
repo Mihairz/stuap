@@ -87,8 +87,15 @@ router.post('/grupa/:grupa/student-edit/:id',grupaController.isLoggedIn,grupaCon
 
 router.get('/grupa/:grupa/student-view/:id',grupaController.isLoggedIn,grupaController.viewuser);
 
-router.get('/grupa/:grupa/student-delete/:id',grupaController.isLoggedIn,grupaController.delete); 
+router.get('/grupa/:grupa/student-delete/:email',grupaController.isLoggedIn,grupaController.delete);
 
+//Financiar
+const financiarController = require('../controllers/financiarController');
+
+router.get('/financiar',financiarController.isLoggedIn ,financiarController.view);
+router.post('/financiar',financiarController.isLoggedIn, financiarController.find);
+
+router.get('/financiar-view/:table',financiarController.isLoggedIn,financiarController.viewuser);
 
 //Student
 const studentController = require('../controllers/studentController');
@@ -96,6 +103,8 @@ const studentController = require('../controllers/studentController');
 router.get('/student-orar/:grupa',studentController.isLoggedIn,studentController.viewOrar);
 
 router.get('/student-catalog/:grupa/:email',studentController.isLoggedIn,studentController.viewCatalog);
+
+router.get('/student-financiar/:grupa/:email',studentController.isLoggedIn,studentController.viewFinanciar);
 
 module.exports = router;
 

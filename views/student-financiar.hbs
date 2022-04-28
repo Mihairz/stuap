@@ -1,0 +1,37 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/index">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Financiar</li>
+  </ol>
+</nav>
+
+
+
+<div class="view-user p-5">
+
+
+    {{#each rows}}
+    <div class="row mb-5">
+        <div class="col text-center">
+            <img src="/upload/{{this.poza}}" alt="POZA" class="rounded-circle" width="150">
+            <h3>{{this.nume}} {{this.prenume}}</h3>
+            <h4>{{this.facultate}} {{this.grupa}}</h4>
+        </div>
+    </div>
+    
+    </div>
+       <div class="row">
+            <div class="col">
+                <b>Financiar</b>
+            </div>
+        </div>
+       <div class="row">
+            <div class="col" style="white-space: pre-line;">
+                {{this.financiar}}
+            </div>
+        </div>
+    </div>
+    {{/each}}
+
+    <h1>Detalii contact casierie / IBAN ul facultatii etc </h1>
+</div>

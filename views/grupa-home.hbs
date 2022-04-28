@@ -21,6 +21,7 @@ Deleted succesfully.
     <th scope="col">Nume</th>
     <th scope="col">Prenume</th>
     <th scope="col">E-mail</th>
+    <th scope="col">Telefon</th>
     <th scope="col" class="text-end">Action</th>
 
 </tr>
@@ -33,10 +34,11 @@ Deleted succesfully.
     <td>{{this.nume}}</td>
     <td>{{this.prenume}}</td>
     <td>{{this.email}}</td>
+    <td>{{this.telefon}}</td>
     <td class="text-end">
         <a href="grupa/{{this.grupa}}/student-view/{{this.id}}" type="button" class="btn btn-light btn-small"><i class="bi bi-eye"></i>View</a>
         <a href="grupa/{{this.grupa}}/student-edit/{{this.id}}" type="button" class="btn btn-light btn-small"><i class="bi bi-pencil"></i>Edit</a>
-        <a href="grupa/{{this.grupa}}/student-delete/{{this.id}}" type="button" class="btn btn-light btn-small"><i class="bi bi-person-x"></i>Delete</a>
+        <a href="grupa/{{this.grupa}}/student-delete/{{this.email}}" type="button" class="btn btn-light btn-small"><i class="bi bi-person-x"></i>Delete</a>
     </td>
 </tr>
 {{/each}}

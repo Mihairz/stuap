@@ -93,6 +93,12 @@ app.post('/profilePhone', authController.isLoggedIn, (req,res) => {
         }
     });
     
+    if(!req.user.admin){
+        db.query('UPDATE '+req.user.grupa+' SET telefon = ? WHERE email = ?',[req.body.telefon,req.user.email],(err,rows)=>{
+            if(err){console.log(err)}
+        })
+    }
+
     res.redirect('profile');
 })
 

@@ -14,6 +14,6 @@ router.post('/grupa/:grupa/student-edit/:id',grupaController.isLoggedIn,grupaCon
 
 router.get('/grupa/:grupa/student-view/:id',grupaController.isLoggedIn,grupaController.viewuser);
 
-router.get('/grupa/:grupa/student-delete/:id',grupaController.isLoggedIn,grupaController.delete); 
+router.get('/grupa/:grupa/student-delete/:email',grupaController.isLoggedIn,grupaController.delete); 
 
 module.exports = router;

@@ -123,7 +123,7 @@ exports.create = (req,res)=>{
         })
 
         //Creeaza automat tabel cu grupa pentru baza de date
-        connection.query('CREATE TABLE `'+grupaLowercaseFaraSpatii+'` ( `id` INT NOT NULL AUTO_INCREMENT ,`grupa` VARCHAR(10) NOT NULL,`nume` VARCHAR(10) NOT NULL , `prenume` VARCHAR(30) NOT NULL ,`email` VARCHAR(30) NOT NULL, `note` TEXT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB; ',(err)=>{
+        connection.query('CREATE TABLE `'+grupaLowercaseFaraSpatii+'` ( `id` INT NOT NULL AUTO_INCREMENT ,`grupa` VARCHAR(10) NOT NULL,`facultate` VARCHAR(10) NOT NULL ,`nume` VARCHAR(10) NOT NULL , `prenume` VARCHAR(30) NOT NULL ,`email` VARCHAR(30) NOT NULL,`telefon` VARCHAR(10) NOT NULL, `note` TEXT(255) NOT NULL ,`financiar` TEXT(255) NOT NULL, PRIMARY KEY (`id`)) ENGINE = InnoDB; ',(err)=>{
             if(err){
                 console.log(err)}
             else{
@@ -208,6 +208,8 @@ exports.update = (req,res) => {
 
         })
 
+        connection.query('UPDATE '+req.params.grupa+' SET grupa =?',[grupaLowercaseFaraSpatii],(err)=>{if(err){console.log(err)}})
+        connection.query('UPDATE users SET grupa=? WHERE grupa = ?',[grupaLowercaseFaraSpatii,req.params.grupa],(err)=>{if(err){console.log(err)}})
 
         connection.query('ALTER TABLE '+req.params.grupa+' RENAME TO '+grupaLowercaseFaraSpatii, 
         (err)=>{if(err){console.log(err)}}
@@ -247,6 +249,8 @@ exports.delete = (req,res) => {
 
         })
 
+        connection.query('DELETE FROM users WHERE grupa=?',[req.params.grupa],(err)=>{if(err){console.log(err)}})
+
         connection.query(' DROP TABLE `'+[req.params.grupa]+'` ',(err,ok)=>{
             if(err){console.log(err);}
         })
@@ -266,7 +270,7 @@ exports.viewuser = (req,res)=>{
         connection.query('SELECT * FROM orar WHERE grupa = ?',[req.params.grupa], (err,rows)=>{
             //When done with the connection, release it
             connection.release();
-
+            
             if(!err){
                 if(req.user){
                     if(req.user.admin){
