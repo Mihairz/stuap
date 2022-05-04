@@ -75,64 +75,65 @@ exports.form = (req, res) => {
 }
 
 //Add new user
-exports.create = (req,res)=>{
+exports.create = (req, res) => {
 
-    const{ nume,prenume,email,note,financiar,password,passwordConfirm} = req.body;
+    const { nume, prenume, email, note, financiar, password, passwordConfirm } = req.body;
     const grupamea = req.params.grupa;
 
-    pool.getConnection((err, connection)=>{
-        if(err) throw err; //not connected
-        console.log('Connected as ID '+connection.threadId);
+    pool.getConnection((err, connection) => {
+        if (err) throw err; 
+        console.log('Connected as ID ' + connection.threadId);
         connection.release();
 
         let searchTerm = req.body.search;
 
-        if (!nume || !prenume || !email || !password || !passwordConfirm){
-            res.render('grupa-add',{grupamea,message:'Te rog sa introduci toate datele necesare.',title:'grupanew',layout:'grupa-main'})
+        if (!nume || !prenume || !email || !password || !passwordConfirm) {
+            res.render('grupa-add', { grupamea, message: 'Te rog sa introduci toate datele necesare.', title: 'grupanew', layout: 'grupa-main' })
         } else {
-            connection.query('SELECT email FROM users WHERE email = ?', [email], async (error,results) => {
-                if(error){
+            connection.query('SELECT email FROM users WHERE email = ?', [email], async (error, results) => {
+                if (error) {
                     console.log(error);
                 }
 
-                if( results.length > 0){
-                    res.render('grupa-add',{grupamea,message:'Email is already taken',title:'grupanew',layout:'grupa-main'})
+                if (results.length > 0) {
+                    res.render('grupa-add', { grupamea, message: 'Email is already taken', title: 'grupanew', layout: 'grupa-main' })
                 }
-                else if (password !== passwordConfirm){
-                    res.render('grupa-add',{grupamea,message:'Passwords do not match.',title:'grupanew',layout:'grupa-main'})
-                }else{
+                else if (password !== passwordConfirm) {
+                    res.render('grupa-add', { grupamea, message: 'Passwords do not match.', title: 'grupanew', layout: 'grupa-main' })
+                } else {
 
                     let hashedPassword = await bcrypt.hash(password, 8);
-                    console.log("Hashed password: ",hashedPassword);
-    
-    
-                    connection.query('INSERT INTO '+req.params.grupa+' SET grupa = ?, nume =?, prenume = ?, email = ?, note = ?, financiar = ?', [req.params.grupa, nume, prenume, email, note,financiar],(err,rows)=>{if(err){console.log(err)} })
-    
-                    connection.query('SELECT * FROM orar WHERE grupa = ?',[req.params.grupa],(err,results)=>{
-                        if(err){console.log(err)}
-                        else{
-                            connection.query('UPDATE '+req.params.grupa+' SET facultate = ? WHERE email = ?',[results[0].facultate, email],(err)=>{
-                                if(err){console.log(err)}
+                    console.log("Hashed password: ", hashedPassword);
+
+
+                    connection.query('INSERT INTO ' + req.params.grupa + ' SET grupa = ?, nume =?, prenume = ?, email = ?, note = ?, financiar = ?', [req.params.grupa, nume, prenume, email, note, financiar], (err, rows) => { if (err) { console.log(err) } })
+
+                    connection.query('SELECT * FROM orar WHERE grupa = ?', [req.params.grupa], (err, results) => {
+                        if (err) { console.log(err) }
+                        else {
+                            connection.query('UPDATE ' + req.params.grupa + ' SET facultate = ? WHERE email = ?', [results[0].facultate, email], (err) => {
+                                if (err) { console.log(err) }
                             })
-    
-                            connection.query('INSERT INTO users SET ?', {facultate:results[0].facultate,grupa:req.params.grupa,name:nume,prenume:prenume, email:email, password:hashedPassword},
-                            (error, results) => { 
-                                if(error){console.log(error)}
-                                else{
-                                    if (req.user){
-                                        res.render('grupa-add',{grupamea,alert:'Student '+nume+' '+prenume+' has been added succesfully.',title:'grupanew',layout:'grupa-main'});
-                                    } else {
-                                        res.redirect('/login');
+
+                            connection.query('INSERT INTO users SET ?', { facultate: results[0].facultate, grupa: req.params.grupa, name: nume, prenume: prenume, email: email, password: hashedPassword },
+                                (error, results) => {
+                                    if (error) { console.log(error) }
+                                    else {
+                                        if (req.user) {
+                                            res.render('grupa-add', { grupamea, alert: 'Student ' + nume + ' ' + prenume + ' has been added succesfully.', title: 'grupanew', layout: 'grupa-main' });
+                                        } else {
+                                            res.redirect('/login');
+                                        }
                                     }
                                 }
-                            })
+                            )
                         }
                     })
                 }
             })
         }
     })
-}    
+}
 
 //Edit user
 exports.edit = (req, res) => {
@@ -165,22 +166,22 @@ exports.edit = (req, res) => {
 exports.update = (req, res) => {
     const { nume, prenume, email, note, financiar, password, passwordConfirm } = req.body;
 
-    if(!nume || !prenume || !email){
+    if (!nume || !prenume || !email) {
 
         pool.getConnection((err, connection) => {
             if (err) throw err;
             console.log('Connected as ID ' + connection.threadId);
-    
+
             const interogatie = ('SELECT * FROM ' + req.params.grupa + ' WHERE email = ?');
-    
+
             connection.query(interogatie, [req.params.email], (err, rows) => {
-    
+
                 connection.release();
-    
+
                 if (!err) {
                     const grupamea = req.params.grupa;
                     if (req.user) {
-                        res.render('grupa-edit', { rows,message:'Nume, prenume și email sunt cămpuri obligatorii.',grupamea, title: 'grupaedit', layout: 'grupa-main' });
+                        res.render('grupa-edit', { rows, message: 'Nume, prenume și email sunt cămpuri obligatorii.', grupamea, title: 'grupaedit', layout: 'grupa-main' });
                     } else {
                         res.redirect('/login');
                     }
@@ -195,22 +196,22 @@ exports.update = (req, res) => {
         pool.getConnection((err, connection) => {
             if (err) throw err;
             console.log('Connected as ID ' + connection.threadId);
-    
+
             connection.query('SELECT * FROM users WHERE email = ?', [email], async (error, results) => {
                 if (error) {
                     console.log(error);
                 }
-    
+
                 if (results.length == 1) {
 
                     connection.query('SELECT * FROM ' + req.params.grupa + ' WHERE email = ?', [req.params.email], (err, rows) => {
-    
+
                         connection.release();
 
                         if (!err) {
                             const grupamea = req.params.grupa;
                             if (req.user) {
-                                res.render('grupa-edit', { rows, grupamea, message:'Email already taken', title: 'grupaupdate', layout: 'grupa-main' });
+                                res.render('grupa-edit', { rows, grupamea, message: 'Email already taken', title: 'grupaupdate', layout: 'grupa-main' });
                             } else {
                                 res.redirect('/login');
                             }
@@ -220,13 +221,13 @@ exports.update = (req, res) => {
                     })
                 } else if (password !== passwordConfirm) {
                     connection.query('SELECT * FROM ' + req.params.grupa + ' WHERE email = ?', [req.params.email], (err, rows) => {
-    
+
                         connection.release();
 
                         if (!err) {
                             const grupamea = req.params.grupa;
                             if (req.user) {
-                                res.render('grupa-edit', { rows, grupamea, message:'Passwords do not match.', title: 'grupaupdate', layout: 'grupa-main' });
+                                res.render('grupa-edit', { rows, grupamea, message: 'Passwords do not match.', title: 'grupaupdate', layout: 'grupa-main' });
                             } else {
                                 res.redirect('/login');
                             }
@@ -237,24 +238,24 @@ exports.update = (req, res) => {
                 } else {
                     let hashedPassword = await bcrypt.hash(password, 8);
                     console.log("Hashed password: ", hashedPassword);
-                    
+
 
                     connection.query('UPDATE users SET name= ?,prenume = ?,email= ?,password = ? WHERE email = ?', [nume, prenume, email, hashedPassword, req.params.email], (err) => { if (err) { console.log(err) } })
-        
+
                     connection.query('UPDATE ' + req.params.grupa + ' SET grupa= ?,nume= ?,prenume = ?,email= ?,note= ?,financiar = ? WHERE email = ?', [req.params.grupa, nume, prenume, email, note, financiar, req.params.email], (err, rows) => {
-        
+
                         connection.release();
-        
+
                         if (!err) {
                             pool.getConnection((err, connection) => {
                                 if (err) throw err;
                                 console.log('Connected as ID ' + connection.threadId);
-        
-        
+
+
                                 connection.query('SELECT * FROM ' + req.params.grupa + ' WHERE email = ?', [req.params.email], (err, rows) => {
-        
+
                                     connection.release();
-        
+
                                     if (!err) {
                                         const grupamea = req.params.grupa;
                                         if (req.user) {
@@ -270,11 +271,11 @@ exports.update = (req, res) => {
                         } else {
                             console.log(err);
                         }
-                    })                    
-                }  
+                    })
+                }
             })
         })
-    } 
+    }
 }
 
 //Delete user

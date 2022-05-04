@@ -1,10 +1,7 @@
-
 <div class="container">
     <div class="main-body">
         <div class="row gutters-sm">
 
-
-            <!--col-md-4 mb-3-->
             <div class="unu">
                 <div class="card">
                     <div class="card-body">
@@ -12,7 +9,8 @@
                             {{#if user.poza}}
                                 <div class="circle-avatar" style="background-image:url({{user.poza}})"></div>
                             {{else}}
-                                <img src="/public/images/standard-profile-picture.png" alt="pozaprofil" class="rounded-circle" width="150">
+                                <img src="/public/images/standard-profile-picture.png" alt="pozaprofil"
+                                class="rounded-circle" width="150">
                             {{/if}}
                             <div class="mt-3">
                                 <h4>{{user.name}} {{user.prenume}}</h4>
@@ -70,33 +68,35 @@
                                 {{/if}}
                             </div>
                         </div>
+
                         <hr>
+
                         {{#unless user.admin}}
-                        <div class="row">
-                            <div class="col-sm-3 text-secondary">
-                                <h6 class="mb-0">Grupa</h6>
+                            <div class="row">
+                                <div class="col-sm-3 text-secondary">
+                                    <h6 class="mb-0">Grupa</h6>
+                                </div>
+                                <div class="col-sm-9">
+                                    {{user.grupa}}
+                                </div>
                             </div>
-                            <div class="col-sm-9">
-                                {{user.grupa}}
-                            </div>
-                        </div>
-                        <hr>
 
-                        <div class="row">
-                            <div class="col-sm-3 text-secondary">
-                                <h6 class="mb-0">Facultate</h6>
-                            </div>
-                            <div class="col-sm-9">
-                                {{user.facultate}}
-                            </div>
-                        </div>
+                            <hr>
 
+                            <div class="row">
+                                <div class="col-sm-3 text-secondary">
+                                    <h6 class="mb-0">Facultate</h6>
+                                </div>
+                                <div class="col-sm-9">
+                                    {{user.facultate}}
+                                </div>
+                            </div>
                         {{/unless}}
 
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-md-11 profile-buttons" style="text-align: right;">
                 {{#if user.admin}}
                     <a class="btn-lg add-admin-buton" href="/registerAdmin/{{user.email}}">Add Admin</a>
@@ -108,17 +108,5 @@
             </div>
 
         </div>
-
-        
-
     </div>
 </div>
-
-
-
-
-
-
-
-
-

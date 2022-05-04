@@ -6,21 +6,21 @@
 </nav>
 
 {{#if alert}}
-<div class="alert alert-success alert-dismissible fade show" role="alert">
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
     {{alert}}
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
+  </div>
 {{/if}}
 
 {{#if eroare}}
-<div class="alert alert-danger alert-dismissible fade show" role="alert">
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
     {{eroare}}
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
+  </div>
 {{/if}}
 
 {{#each rows}}
-<form class="row g-3 needs-validation" method="POST" action="/orar-edit/{{this.grupa}}/{{this.id}}" novalidate>
+  <form class="row g-3 needs-validation" method="POST" action="/orar-edit/{{this.grupa}}/{{this.id}}" novalidate>
     {{> orar-form}}
-</form>
+  </form>
 {{/each}}

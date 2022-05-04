@@ -31,10 +31,10 @@
                 <div class="input-container ic2">
                     <input type="email" class="input" id="email" name="email" placeholder=" ">
                     <div class="cut"></div>
-                    <label for="email" class="placeholder">Email</label>    
+                    <label for="email" class="placeholder">Email</label>
                 </div>
 
-                
+
                 <div class="input-container ic2">
                     <input type="password" class="input" id="password" name="password" placeholder=" ">
                     <div class="cut"></div>
@@ -45,25 +45,26 @@
                     <input type="password" class="input" id="passwordConfirm" name="passwordConfirm" placeholder=" ">
                     <div class="cut"></div>
                     <label for="passwordConfirm" class="placeholder">Confirm password</label>
-                </div> 
+                </div>
 
                 <br>
+
                 <button type="submit" class="submit">Register</button>
             </form>
 
             <br><br>
+
             {{#if message}}
                 <h4 class="error-message">{{message}}</h4>
             {{/if}}
             {{#if succesMessage}}
-                <h4 class="error-message">{{succesMessage}}<h3><a href="/index" class="login-link">Înapoi la homepage.</a></h3>
+                <h4 class="error-message">{{succesMessage}}</h4>
+                <h3><a href="/index" class="login-link">Înapoi la homepage.</a></h3>
             {{else}}
                 <br><br>
                 <h3><a href="/index" class="login-link">Înapoi la homepage.</a></h3>
             {{/if}}
-            
 
         </div>
     </div>
 </div>
-

@@ -1,6 +1,5 @@
 const mysql = require('mysql');
 
-//Connection pool
 const pool = mysql.createPool({
     connectionLimit: 100,
     host: process.env.DATABASE_HOST,
@@ -16,7 +15,7 @@ const { promisify } = require('util');
 exports.view = (req, res) => {
 
     pool.getConnection((err, connection) => {
-        if (err) throw err; //not connected
+        if (err) throw err; 
         console.log('Connected as ID ' + connection.threadId);
 
         connection.query("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = ?", ['stuap'], (err, rows) => {
@@ -49,7 +48,7 @@ exports.view = (req, res) => {
 //Find user by search
 exports.find = (req, res) => {
     pool.getConnection((err, connection) => {
-        if (err) throw err; //not connected
+        if (err) throw err; 
         console.log('Connected as ID ' + connection.threadId);
 
         let searchTerm = req.body.search;
@@ -126,7 +125,7 @@ exports.create = (req, res) => {
 exports.edit = (req, res) => {
 
     pool.getConnection((err, connection) => {
-        if (err) throw err; //not connected
+        if (err) throw err;
         console.log('Connected as ID ' + connection.threadId);
 
         const catalog = req.params.catalog;
@@ -157,10 +156,10 @@ exports.update = (req, res) => {
 
             const grupaLowercaseFaraSpatii = ((req.body.grupa).replace(/ +/g, '')).toLowerCase();
 
-            if (!grupaLowercaseFaraSpatii){
+            if (!grupaLowercaseFaraSpatii) {
                 if (req.user) {
                     const catalog = req.params.catalog;
-                    res.render('catalog-edit', {catalog, eroare:'Te rog sa introduci toate datele necesare.', title: 'catalogupdate', layout: 'catalog-main' });
+                    res.render('catalog-edit', { catalog, eroare: 'Te rog sa introduci toate datele necesare.', title: 'catalogupdate', layout: 'catalog-main' });
                 } else {
                     res.redirect('/login');
                 }
@@ -176,7 +175,7 @@ exports.update = (req, res) => {
 
                 if (!err) {
                     pool.getConnection((err, connection) => {
-                        if (err) throw err; //not connected
+                        if (err) throw err; 
                         console.log('Connected as ID ' + connection.threadId);
 
                         if (req.user) {

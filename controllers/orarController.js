@@ -1,6 +1,5 @@
 const mysql = require('mysql');
 
-//Connection pool
 const pool = mysql.createPool({
     connectionLimit: 100,
     host: process.env.DATABASE_HOST,
