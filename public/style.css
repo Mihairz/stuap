@@ -15,14 +15,17 @@
     --clr-background-h1:white;
 }
 
-
-
 body{
     background-color: #010409;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
     transition: background 0.3s linear;
+}
+
+br {
+    display: block;
+    margin: 19px 0;
 }
 
 /*v---Navigation bar---v*/
@@ -168,14 +171,6 @@ body{
     margin-left: 10%;
 }
 /*^--SECRETARIAT BIBLIOTECA--^*/
-
-
-
-
-br {
-    display: block;
-    margin: 19px 0;
-}
 
 /*v--FOOTER--v*/
     footer {

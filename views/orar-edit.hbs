@@ -12,6 +12,13 @@
 </div>
 {{/if}}
 
+{{#if eroare}}
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{eroare}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{{/if}}
+
 {{#each rows}}
 <form class="row g-3 needs-validation" method="POST" action="/orar-edit/{{this.grupa}}/{{this.id}}" novalidate>
     {{> orar-form}}

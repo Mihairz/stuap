@@ -7,13 +7,20 @@
 
 {{#if alert}}
 <div class="alert alert-success alert-dismissible fade show" role="alert">
-    {{alert}}
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  {{alert}}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
+{{/if}}
+
+{{#if eroare}}
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{eroare}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
 {{/if}}
 
 <h3 style="color:white;">Nume actual: {{catalog}}</h3>
 
 <form class="row g-3 needs-validation" method="POST" action="/catalog-edit/{{catalog}}" novalidate>
-    {{> catalog-form}}
+  {{> catalog-form}}
 </form>

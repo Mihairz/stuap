@@ -6,19 +6,20 @@
 </nav>
 
 {{#if alert}}
-<div class="alert alert-success alert-dismissible fade show" role="alert">
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
     {{alert}}
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
+  </div>
 {{/if}}
+
 {{#if message}}
-    <h4 class="error-message">{{message}}</h4>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
 {{/if}}
-{{#if succesMessage}}
-    <h4 class="error-message">{{succesMessage}}<h3>
-{{/if}}
+
 
 <form class="row g-3 needs-validation" method="POST" action="/grupa/{{grupamea}}/student-add" novalidate>
-    {{> student-form}}
+  {{> student-form}}
 </form>
-

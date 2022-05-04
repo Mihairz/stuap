@@ -1,38 +1,37 @@
-
 {{#if removedUser}}
-<div class="alert alert-success alert-dismissible fade show" role="alert">
-Grupa has been removed.
-<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        Grupa has been removed.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
 {{/if}}
 
 <div class="row">
-    <div class="col-6 alb"><h1>Financiar - Grupe</h1></div>
+    <div class="col-6 alb">
+        <h1>Financiar - Grupe</h1>
+    </div>
     <!-- <div class="col-6 d-flex justify-content-end">
         <a href="/catalog-add" type="button" class="btn btn-primary align-self-center">+Add catalog</a> 
     </div> -->
 </div>
 
 <table class="table table-bordered table-hover">
-<thead class="thead-dark thead-albastru">
-<tr>
-    <th scope="col">Grupa</th>
-    <th scope="col" class="text-end">Action</th>
-</tr>
-</thead>
+    <thead class="thead-dark thead-albastru">
+        <tr>
+            <th scope="col">Grupa</th>
+            <th scope="col" class="text-end">Action</th>
+        </tr>
+    </thead>
 
-<tbody>
-    {{#each rows}}
-        
-            <tr> 
+    <tbody>
+        {{#each rows}}
+            <tr>
                 <td>{{this.TABLE_NAME}}</td>
 
                 <td class="text-end">
-                    <a href="/grupa/{{this.TABLE_NAME}}" type="button" class="btn btn-light btn-small"><i class="bi bi-eye"></i>View</a>
+                    <a href="/grupa/{{this.TABLE_NAME}}" type="button" class="btn btn-light btn-small"><i
+                            class="bi bi-eye"></i>View</a>
                 </td>
             </tr>
-        
-    {{/each}}
-</tbody>
-
+        {{/each}}
+    </tbody>
 </table>
