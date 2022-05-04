@@ -1,0 +1,62 @@
+<br><br><br><br>
+<div class="formdiv">
+    <div class="loginform">
+        <div class="title">Register Admin</div>
+        
+        <form action="/auth/registerAdmin/{{user.email}}" method="POST">
+
+            <div class="input-container ic1">
+                <input type="text" class="input" id="name" name="nume" placeholder=" ">
+                <div class="cut"></div>
+                <label for="name" class="login-form-placeholder">Nume</label>
+            </div>
+
+            <div class="input-container ic1">
+                <input type="text" class="input" id="prenume" name="prenume" placeholder=" ">
+                <div class="cut"></div>
+                <label for="prenume" class="login-form-placeholder">Prenume</label>
+            </div>
+
+            <div class="input-container ic2">
+                <input type="email" class="input" id="email" name="email" placeholder=" ">
+                <div class="cut"></div>
+                <label for="email" class="login-form-placeholder">Email</label>    
+            </div>
+
+            
+            <div class="input-container ic2">
+                <input type="password" class="input" id="password" name="password" placeholder=" ">
+                <div class="cut"></div>
+                <label for="password" class="login-form-placeholder">Password</label>
+            </div>
+
+            <div class="input-container ic2">
+                <input type="password" class="input" id="passwordConfirm" name="passwordConfirm" placeholder=" ">
+                <div class="cut"></div>
+                <label for="passwordConfirm" class="login-form-placeholder">Confirm password</label>
+            </div> 
+            
+            <br>
+            <button type="submit" class="submit">Register Admin</button>
+        </form>
+        
+        <br><br>
+        {{#if message}}
+            <div class="alert alert-danger" role="alert">
+                <h5>{{message}}</h5>
+            </div>
+        {{/if}}
+        {{#if succesMessage}}
+            <div class="alert alert-success" role="alert">
+                <h5>{{succesMessage}}</h5>
+            </div>
+        {{/if}}
+
+        
+        
+    </div>
+</div>
+
+
+
+

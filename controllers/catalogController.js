@@ -27,7 +27,7 @@ exports.view = (req,res)=>{
 
             //console.log("ROWS INAINTE:",rows);
             for (var key in rows){
-                if (rows[key].TABLE_NAME == "orar" || rows[key].TABLE_NAME == "users"){
+                if (rows[key].TABLE_NAME == "orar" || rows[key].TABLE_NAME == "users" || rows[key].TABLE_NAME == "facultati"){
                     delete rows[key];
                 }
             }
@@ -69,7 +69,7 @@ exports.find = (req,res)=>{
             connection.release();
 
             for (var key in rows){
-                if (rows[key].TABLE_NAME == "orar" || rows[key].TABLE_NAME == "users"){
+                if (rows[key].TABLE_NAME == "orar" || rows[key].TABLE_NAME == "users" || rows[key].TABLE_NAME == "facultati"){
                     delete rows[key];
                 }
             }

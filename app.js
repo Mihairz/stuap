@@ -52,11 +52,15 @@ app.use('/grupa', require('./routes/grupa'));
 
 app.use(express.static('public'));
 app.use(express.static('upload')); 
+app.use('/public', express.static(__dirname + '/public'));
+app.use('/upload', express.static(__dirname + '/upload'));
+
 
 
 
 const authController = require('./controllers/auth');
 const { Server } = require('http');
+const router = require('./routes/profile');
 
 app.post('/profilePicture', authController.isLoggedIn, (req,res) => {
     let poza;
@@ -82,25 +86,23 @@ app.post('/profilePicture', authController.isLoggedIn, (req,res) => {
             }
         });
         
-        res.redirect('profile');
-    });
-})
+        db.query('SELECT * FROM users WHERE email = ?',[req.user.email], (err,rows)=>{
+            if(!err){
+                if(req.user){
+                    res.redirect('/profile');
+                } else { 
+                    res.redirect('/login');
+                }
+            } else {
+                console.log(err);
+            }
 
-app.post('/profilePhone', authController.isLoggedIn, (req,res) => {
-    db.query('UPDATE users SET telefon = ? WHERE id = ?',[req.body.telefon, req.user.id], (err,rows)=>{
-        if(err){ 
-            console.log(err);
-        }
-    });
-    
-    if(!req.user.admin){
-        db.query('UPDATE '+req.user.grupa+' SET telefon = ? WHERE email = ?',[req.body.telefon,req.user.email],(err,rows)=>{
-            if(err){console.log(err)}
+            //console.log("The data from orar table: \n",rows)
+
         })
-    }
-
-    res.redirect('profile');
+    });
 })
+
 
 app.listen(port=5000, ()=> {
     console.log("Server started on port "+port);

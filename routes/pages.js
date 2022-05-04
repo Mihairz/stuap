@@ -12,16 +12,23 @@ router.get('/index', authController.isLoggedIn, (req,res) => {
 });
 
 router.get('/register', authController.isLoggedIn, (req,res) => {
-    /*if(req.user.admin){
-        res.render('register');
-    }else{
-        res.redirect('/profile');
-    }*/
     if(req.user){
         if(req.user.admin){
-            res.render('register', {user:req.user});
+            res.render('register', {user:req.user,title:'register-layout',layout:'profile-auth'});
         } else {
-            res.redirect('/profile');
+            res.redirect('/profile',{title:'profile-layout',layout:'profile-auth'});
+        }
+    } else {
+        res.redirect('/login');
+    }
+});
+
+router.get('/registerAdmin/:email', authController.isLoggedIn, (req,res) => {
+    if(req.user){
+        if(req.user.admin){
+            res.render('register-admin', {user:req.user,title:'register-layout',layout:'profile-auth'});
+        } else {
+            res.redirect('/profile',{title:'profile-layout',layout:'profile-auth'});
         }
     } else {
         res.redirect('/login');
@@ -29,17 +36,9 @@ router.get('/register', authController.isLoggedIn, (req,res) => {
 });
 
 router.get('/login', (req,res) => {
-    res.render('login');
+    res.render('login',{title:'register-layout',layout:'profile-auth'});
 });
 
-router.get('/profile', authController.isLoggedIn,  (req,res) => {
-
-    if(req.user){
-        res.render('profile', {user:req.user} );
-    }else{
-        res.redirect('/login');
-    }
-});
 
 //Orar
 const orarController = require('../controllers/orarController');
@@ -89,6 +88,17 @@ router.get('/grupa/:grupa/student-view/:id',grupaController.isLoggedIn,grupaCont
 
 router.get('/grupa/:grupa/student-delete/:email',grupaController.isLoggedIn,grupaController.delete);
 
+
+//Secretariat
+router.get('/secretariat', authController.isLoggedIn, (req,res) => {
+    res.render('secretariat', {user:req.user} );
+});
+
+//Biblioteca
+router.get('/biblioteca', authController.isLoggedIn, (req,res) => {
+    res.render('biblioteca', {user:req.user} );
+});
+
 //Financiar
 const financiarController = require('../controllers/financiarController');
 
@@ -96,6 +106,17 @@ router.get('/financiar',financiarController.isLoggedIn ,financiarController.view
 router.post('/financiar',financiarController.isLoggedIn, financiarController.find);
 
 router.get('/financiar-view/:table',financiarController.isLoggedIn,financiarController.viewuser);
+
+//Profile
+const profileController = require('../controllers/profileController');
+
+router.get('/profile',profileController.isLoggedIn,profileController.view);
+
+router.get('/profileEdit/:email',profileController.isLoggedIn,profileController.edit);
+router.post('/profileEdit/:email', profileController.isLoggedIn,profileController.update);
+
+
+
 
 //Student
 const studentController = require('../controllers/studentController');
@@ -105,6 +126,9 @@ router.get('/student-orar/:grupa',studentController.isLoggedIn,studentController
 router.get('/student-catalog/:grupa/:email',studentController.isLoggedIn,studentController.viewCatalog);
 
 router.get('/student-financiar/:grupa/:email',studentController.isLoggedIn,studentController.viewFinanciar);
+
+
+
 
 module.exports = router;
 

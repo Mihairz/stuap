@@ -23,23 +23,28 @@ exports.viewOrar = (req,res)=>{
             //When done with the connection, release it
             connection.release();
 
-            //console.log("AM OBTINUT ASstA:",rows);
+
             if(!err){
-                if(req.user){
-                    if(req.user.grupa == req.params.grupa){
-                        res.render('student-orar', {rows,title:'studentorarview',layout:'student-orar-main'});
-                    }
+                connection.query('SELECT * FROM users WHERE grupa = ?',[req.params.grupa],(errr,studenti)=>{
+                    if(errr){console.log(errr)}
                     else{
-                        if(req.user.admin){
-                            res.redirect('/orar');
-                        }else{
-                            res.redirect('/student-orar/'+req.user.grupa);
+                        if(req.user){
+                            if(req.user.grupa == req.params.grupa){
+                                res.render('student-orar', {rows,studenti,title:'studentorarview',layout:'student-orar-main'});
+                            }
+                            else{
+                                if(req.user.admin){
+                                    res.redirect('/orar');
+                                }else{
+                                    res.redirect('/student-orar/'+req.user.grupa);
+                                }
+                            }
+                        }
+                        else{
+                            res.redirect('/login');
                         }
                     }
-                }
-                else{
-                    res.redirect('/login');
-                }
+                })
             } else {
                 console.log(err);
             }

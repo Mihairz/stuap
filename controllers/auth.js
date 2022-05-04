@@ -19,15 +19,13 @@ exports.login = async (req,res) => {
 
         if( !email || !password ){
             return res.status(400).render('login',
-            {message:'Please provide both email and password.'})
+            {message:'Please provide both email and password.',title:'login-return',layout:'profile-auth'})
         }
 
         db.query('SELECT * FROM users WHERE email = ?', [email], async (error, results) => {
             
             if( !results[0] || !(await bcrypt.compare(password, results[0].password)) ) {
-              res.status(401).render('login', {
-                message: 'Email or Password is incorrect'
-              })
+              res.status(401).render('login', {message: 'Email or Password is incorrect',title:'login-return',layout:'profile-auth'})
             } else {
               const id = results[0].id; 
 
@@ -119,6 +117,59 @@ exports.register = (req,res)=>{
             })                    
         })
     }
+}
+
+exports.registerAdmin = (req,res)=>{
+    //console.log(req.body);
+
+    //const name = req.body.name;
+    //const email = req.body.email;
+    //const password = req.body.password;
+    //const passwordConfirm = req.body.passwordConfirm;
+    const {nume, prenume, email, password, passwordConfirm} = req.body;
+
+    db.query('SELECT * FROM users WHERE email = ?',[req.params.email], (err,rows)=>{
+
+        if(err){console.log(err)}
+        else{
+            if (!nume || !prenume || !email || !password || !passwordConfirm){
+                return res.render('register-admin',{user:rows[0],message:'Te rog sa introduci toate datele necesare.',title:'register-layout',layout:'profile-auth'})
+            }else{
+        
+                db.query('SELECT email FROM users WHERE email = ?', [email], async (error,results) => {
+                    if(error){ 
+                        console.log(error);
+                    }
+        
+                    if( results.length > 0){
+                        return res.render('register-admin',{user:rows[0],message:'Email is already taken',title:'register-layout',layout:'profile-auth'})
+                    }
+                    else if (password !== passwordConfirm){
+                        return res.render('register-admin',{user:rows[0],message:'Passwords do not match.',title:'register-layout',layout:'profile-auth'})
+                    }
+        
+                    let hashedPassword = await bcrypt.hash(password, 8);
+                    console.log(hashedPassword);
+        
+                    db.query('INSERT INTO users SET ?', {name:nume,prenume:prenume, email:email, password:hashedPassword, admin:1},
+                        (error, results) => { 
+                            if(error){console.log(error)}
+                            else{
+                                return res.render('register-admin',{user:rows[0],succesMessage:'New admin registered succesfully.',title:'register-layout',layout:'profile-auth'})
+                            }
+                        }
+                    )
+                })
+            }
+        }
+
+        
+
+
+
+    })
+
+    
 }
 
 const { promisify } = require('util');

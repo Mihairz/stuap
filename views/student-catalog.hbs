@@ -1,61 +1,30 @@
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
     <li class="breadcrumb-item"><a href="/index">Home</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Catalog</li>
+    <li class="breadcrumb-item active" aria-current="page" style="color:white;">Catalog</li>
   </ol>
 </nav>
 
 
 
 <div class="view-user p-5">
-
-    {{#each prof}}
-        <div class="row">
-            <div class="col">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">Facultate</th>
-                            <th scope="col">Grupa</th>
-                            <th scope="col">Profesor coordonator</th>
-                            <th scope="col">E-mail profesor coordonator</th>
-                            <th scope="col">Telefon profesor coordonator</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <th scope="row">{{this.facultate}}</th>
-                            <td>{{this.grupa}}</td>
-                            <td>{{this.profesor_coordonator}}</td>
-                            <td>{{this.email_profesor_coordonator}}</td>
-                            <td>{{this.telefon_profesor_coordonator}}</td>
-                        </tr>
-                    </tbody>
-                </table>
+    {{#each rows}}
+        <div class="row mb-5">
+            <div class="col text-center">
+                <h2>{{this.nume}} {{this.prenume}}</h2>
+                <h6>{{this.facultate}} {{this.grupa}}</h6>
             </div>
         </div>
-    {{/each}}
 
-
-    {{#each rows}}
-    <div class="row mb-5">
-        <div class="col text-center">
-            <img src="/upload/{{this.poza}}" alt="POZA" class="rounded-circle" width="150">
-            <h3>{{this.nume}} {{this.prenume}}</h3>
-        </div>
-    </div>
-    
-    </div>
        <div class="row">
             <div class="col">
                 <b>Note</b>
             </div>
         </div>
-       <div class="row">
+        <div class="row">
             <div class="col" style="white-space: pre-line;">
                 {{this.note}}
             </div>
         </div>
-    </div>
     {{/each}}
 </div>

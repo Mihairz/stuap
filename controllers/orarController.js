@@ -130,6 +130,8 @@ exports.create = (req,res)=>{
                 console.log("Tabel creat.")
             }
         })
+
+        connection.query("INSERT INTO facultati SET facultate = ?",[facultate],(err)=>{if(err){console.log(err)}})
     })
 }
 
@@ -270,24 +272,25 @@ exports.viewuser = (req,res)=>{
         connection.query('SELECT * FROM orar WHERE grupa = ?',[req.params.grupa], (err,rows)=>{
             //When done with the connection, release it
             connection.release();
-            
-            if(!err){
-                if(req.user){
-                    if(req.user.admin){
-                        res.render('orar-view', {rows,title:'orarview',layout:'orar-main'});
-                    } else {
-                        res.redirect('/student-orar/'+req.params.grupa);
+
+            if(err){console.log(err)}
+            else{
+                connection.query('SELECT * FROM users WHERE grupa = ?',[req.params.grupa],(errr,studenti)=>{
+                    if(err){console.log(errr)}
+                    else{
+                        if(req.user){
+                            if(req.user.admin){
+                                res.render('orar-view', {rows,studenti,title:'orarview',layout:'orar-main'});
+                            } else {
+                                res.redirect('/student-orar/'+req.params.grupa);
+                            }
+                        }
+                        else{
+                            res.redirect('/login');
+                        }
                     }
-                }
-                else{
-                    res.redirect('/login');
-                }
-            } else {
-                console.log(err);
+                })
             }
-
-            //console.log("The data from orar table: \n",rows)
-
         })
     })
 }

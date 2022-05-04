@@ -1,37 +1,44 @@
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
     <li class="breadcrumb-item"><a href="/index">Home</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Financiar</li>
+    <li class="breadcrumb-item active" aria-current="page" style="color:white;">Financiar</li>
   </ol>
 </nav>
 
 
 
-<div class="view-user p-5">
-
+<div class="view-user p-5 alb">
 
     {{#each rows}}
     <div class="row mb-5">
         <div class="col text-center">
-            <img src="/upload/{{this.poza}}" alt="POZA" class="rounded-circle" width="150">
-            <h3>{{this.nume}} {{this.prenume}}</h3>
-            <h4>{{this.facultate}} {{this.grupa}}</h4>
+            <h2>{{this.nume}} {{this.prenume}}</h2>
+            <h6>{{this.facultate}} {{this.grupa}}</h6>
+        </div>
+    </div>    
+
+    <div class="row">
+        <div class="col">
+            <b>Financiar</b>
         </div>
     </div>
-    
-    </div>
-       <div class="row">
-            <div class="col">
-                <b>Financiar</b>
-            </div>
-        </div>
-       <div class="row">
-            <div class="col" style="white-space: pre-line;">
-                {{this.financiar}}
-            </div>
+    <div class="row">
+        <div class="col" style="white-space: pre-line;">
+            {{this.financiar}}
         </div>
     </div>
+</div>
     {{/each}}
 
-    <h1>Detalii contact casierie / IBAN ul facultatii etc </h1>
+<div id="text-secretariat" style="text-align: right;">
+    <h3>Casierie</h3>
+        <h4>
+        Facultate, corp, etaj
+        Strada Nr, Orașul
+        Program: L-V 10-20 
+        emailcasierie@gmailcom
+        Telefon 1
+        Telefon 2
+        www.facultate.universitate.ro/plata-online
+        </h4>
 </div>

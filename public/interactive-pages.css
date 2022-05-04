@@ -1,0 +1,13 @@
+@import url('/public/style.css');
+@import url('https://fonts.googleapis.com/css?family=Montserrat:500');
+@import url('http://fonts.cdnfonts.com/css/akira-expanded');
+
+.table-hover thead, .table-hover tbody{color:white;}
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover th{color:#238636;}
+.table{color: white;}
+
+.thead-albastru{background-color:rgba(31,111,235,1)}
+
+.view-user{color: white;}
+
+.alb{color:white;}
