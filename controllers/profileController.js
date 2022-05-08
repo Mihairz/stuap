@@ -47,7 +47,7 @@ exports.update = (req, res) => {
     pool.getConnection((err, connection) => {
         if (err) throw err;
 
-        if (!nume || !prenume || !email || !telefon){
+        if (!nume || !prenume || !email || !telefon) {
             connection.query('SELECT * FROM users WHERE email = ?', [req.params.email], (err, rows) => {
 
                 if (!err) {
@@ -59,18 +59,37 @@ exports.update = (req, res) => {
                 } else {
                     console.log(err);
                 }
-            })        
-        }else{
+            })
+        } else {
             connection.query('UPDATE users SET name = ?, prenume = ?, email = ?, telefon = ? WHERE email = ?', [nume, prenume, email, telefon, req.params.email], (err, rows) => {
                 connection.release();
                 if (err) { console.log(err) }
             })
-    
+
             connection.query('SELECT * FROM users WHERE email = ?', [req.params.email], (err, rows) => {
-    
+
                 if (!err) {
                     if (req.user) {
                         res.render('profile-edit', { rows, user: req.user, alert: 'Succesfully updated.', title: 'profiledit', layout: 'profile-auth' });
+                    } else {
+                        res.redirect('/login');
+                    }
+                } else {
+                    console.log(err);
+                }
+            })
+        }
+    })
+}
+
+exports.visit = (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err) { console.log(err); }
+        else {
+            connection.query('SELECT * FROM users WHERE email = ?', [req.params.email], (err, rows) => {
+                if (!err) {
+                    if (req.user) {
+                        res.render('profile-visit', { rows, user: req.user, title: 'profiledit', layout: 'profile-auth' });
                     } else {
                         res.redirect('/login');
                     }

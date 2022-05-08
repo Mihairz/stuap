@@ -113,6 +113,8 @@ router.get('/profile', profileController.isLoggedIn, profileController.view);
 router.get('/profileEdit/:email', profileController.isLoggedIn, profileController.edit);
 router.post('/profileEdit/:email', profileController.isLoggedIn, profileController.update);
 
+router.get('/profileVisit/:email',profileController.isLoggedIn,profileController.visit);
+
 //Student
 const studentController = require('../controllers/studentController');
 

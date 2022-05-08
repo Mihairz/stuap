@@ -204,74 +204,77 @@ exports.update = (req, res) => {
 
                 if (results.length == 1) {
 
-                    connection.query('SELECT * FROM ' + req.params.grupa + ' WHERE email = ?', [req.params.email], (err, rows) => {
+                    if(email !== req.params.email){
+                        connection.query('SELECT * FROM ' + req.params.grupa + ' WHERE email = ?', [req.params.email], (err, rows) => {
 
-                        connection.release();
-
-                        if (!err) {
-                            const grupamea = req.params.grupa;
-                            if (req.user) {
-                                res.render('grupa-edit', { rows, grupamea, message: 'Email already taken', title: 'grupaupdate', layout: 'grupa-main' });
+                            connection.release();
+    
+                            if (!err) {
+                                const grupamea = req.params.grupa;
+                                if (req.user) {
+                                    res.render('grupa-edit', { rows, grupamea, message: 'Email already taken', title: 'grupaupdate', layout: 'grupa-main' });
+                                } else {
+                                    res.redirect('/login');
+                                }
                             } else {
-                                res.redirect('/login');
+                                console.log(err);
                             }
-                        } else {
-                            console.log(err);
-                        }
-                    })
-                } else if (password !== passwordConfirm) {
-                    connection.query('SELECT * FROM ' + req.params.grupa + ' WHERE email = ?', [req.params.email], (err, rows) => {
+                        })
+                    }  
+                    else if (password !== passwordConfirm) {
+                        connection.query('SELECT * FROM ' + req.params.grupa + ' WHERE email = ?', [req.params.email], (err, rows) => {
 
-                        connection.release();
+                            connection.release();
 
-                        if (!err) {
-                            const grupamea = req.params.grupa;
-                            if (req.user) {
-                                res.render('grupa-edit', { rows, grupamea, message: 'Passwords do not match.', title: 'grupaupdate', layout: 'grupa-main' });
+                            if (!err) {
+                                const grupamea = req.params.grupa;
+                                if (req.user) {
+                                    res.render('grupa-edit', { rows, grupamea, message: 'Passwords do not match.', title: 'grupaupdate', layout: 'grupa-main' });
+                                } else {
+                                    res.redirect('/login');
+                                }
                             } else {
-                                res.redirect('/login');
+                                console.log(err);
                             }
-                        } else {
-                            console.log(err);
-                        }
-                    })
-                } else {
-                    let hashedPassword = await bcrypt.hash(password, 8);
-                    console.log("Hashed password: ", hashedPassword);
+                        })
+                    } else {
+                        let hashedPassword = await bcrypt.hash(password, 8);
+                        console.log("Hashed password: ", hashedPassword);
 
 
-                    connection.query('UPDATE users SET name= ?,prenume = ?,email= ?,password = ? WHERE email = ?', [nume, prenume, email, hashedPassword, req.params.email], (err) => { if (err) { console.log(err) } })
+                        connection.query('UPDATE users SET name= ?,prenume = ?,email= ?,password = ? WHERE email = ?', [nume, prenume, email, hashedPassword, req.params.email], (err) => { if (err) { console.log(err) } })
 
-                    connection.query('UPDATE ' + req.params.grupa + ' SET grupa= ?,nume= ?,prenume = ?,email= ?,note= ?,financiar = ? WHERE email = ?', [req.params.grupa, nume, prenume, email, note, financiar, req.params.email], (err, rows) => {
+                        connection.query('UPDATE ' + req.params.grupa + ' SET grupa= ?,nume= ?,prenume = ?,email= ?,note= ?,financiar = ? WHERE email = ?', [req.params.grupa, nume, prenume, email, note, financiar, req.params.email], (err, rows) => {
 
-                        connection.release();
+                            connection.release();
 
-                        if (!err) {
-                            pool.getConnection((err, connection) => {
-                                if (err) throw err;
-                                console.log('Connected as ID ' + connection.threadId);
+                            if (!err) {
+                                pool.getConnection((err, connection) => {
+                                    if (err) throw err;
+                                    console.log('Connected as ID ' + connection.threadId);
 
 
-                                connection.query('SELECT * FROM ' + req.params.grupa + ' WHERE email = ?', [req.params.email], (err, rows) => {
+                                    connection.query('SELECT * FROM ' + req.params.grupa + ' WHERE email = ?', [req.params.email], (err, rows) => {
 
-                                    connection.release();
+                                        connection.release();
 
-                                    if (!err) {
-                                        const grupamea = req.params.grupa;
-                                        if (req.user) {
-                                            res.render('grupa-edit', { rows, grupamea, alert: 'Student ' + nume + ' ' + prenume + ' has been updated succesfully.', title: 'grupaupdate', layout: 'grupa-main' });
+                                        if (!err) {
+                                            const grupamea = req.params.grupa;
+                                            if (req.user) {
+                                                res.render('grupa-edit', { rows, grupamea, alert: 'Student ' + nume + ' ' + prenume + ' has been updated succesfully.', title: 'grupaupdate', layout: 'grupa-main' });
+                                            } else {
+                                                res.redirect('/login');
+                                            }
                                         } else {
-                                            res.redirect('/login');
+                                            console.log(err);
                                         }
-                                    } else {
-                                        console.log(err);
-                                    }
+                                    })
                                 })
-                            })
-                        } else {
-                            console.log(err);
-                        }
-                    })
+                            } else {
+                                console.log(err);
+                            }
+                        })
+                    }
                 }
             })
         })

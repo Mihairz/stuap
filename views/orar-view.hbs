@@ -61,7 +61,7 @@
             {{#each studenti}}
                 <div class="row">
                     <div class="col">
-                        {{this.name}} {{this.prenume}}
+                        <a href="/profileVisit/{{this.email}}" style="text-decoration:none;">{{this.name}} {{this.prenume}}</a>
                     </div>
                 </div>
             {{/each}}
