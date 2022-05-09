@@ -17,7 +17,7 @@ exports.view = (req, res) => {
 
     pool.getConnection((err, connection) => {
         if (err) throw err;
-        console.log('Connected as ID ' + connection.threadId);
+        
 
         const intero = ("SELECT * FROM ");
         const interogatie = intero + req.params.grupa;
@@ -44,7 +44,7 @@ exports.view = (req, res) => {
 exports.find = (req, res) => {
     pool.getConnection((err, connection) => {
         if (err) throw err;
-        console.log('Connected as ID ' + connection.threadId);
+        
 
         let searchTerm = req.body.search;
         interogatie = ("SELECT * FROM " + req.params.grupa + " WHERE nume LIKE ? OR prenume LIKE ?");
@@ -82,7 +82,7 @@ exports.create = (req, res) => {
 
     pool.getConnection((err, connection) => {
         if (err) throw err; 
-        console.log('Connected as ID ' + connection.threadId);
+        
         connection.release();
 
         let searchTerm = req.body.search;
@@ -140,7 +140,7 @@ exports.edit = (req, res) => {
 
     pool.getConnection((err, connection) => {
         if (err) throw err;
-        console.log('Connected as ID ' + connection.threadId);
+        
 
         const interogatie = ('SELECT * FROM ' + req.params.grupa + ' WHERE email = ?');
 
@@ -170,7 +170,7 @@ exports.update = (req, res) => {
 
         pool.getConnection((err, connection) => {
             if (err) throw err;
-            console.log('Connected as ID ' + connection.threadId);
+            
 
             const interogatie = ('SELECT * FROM ' + req.params.grupa + ' WHERE email = ?');
 
@@ -195,7 +195,7 @@ exports.update = (req, res) => {
 
         pool.getConnection((err, connection) => {
             if (err) throw err;
-            console.log('Connected as ID ' + connection.threadId);
+            
 
             connection.query('SELECT * FROM users WHERE email = ?', [email], async (error, results) => {
                 if (error) {
@@ -251,7 +251,7 @@ exports.update = (req, res) => {
                             if (!err) {
                                 pool.getConnection((err, connection) => {
                                     if (err) throw err;
-                                    console.log('Connected as ID ' + connection.threadId);
+                                    
 
 
                                     connection.query('SELECT * FROM ' + req.params.grupa + ' WHERE email = ?', [req.params.email], (err, rows) => {
@@ -286,7 +286,7 @@ exports.delete = (req, res) => {
 
     pool.getConnection((err, connection) => {
         if (err) throw err;
-        console.log('Connected as ID ' + connection.threadId);
+        
 
         connection.query('DELETE FROM users WHERE email = ?', [req.params.email], (err) => { if (err) { console.log(err) } })
 
@@ -316,7 +316,7 @@ exports.viewuser = (req, res) => {
 
     pool.getConnection((err, connection) => {
         if (err) throw err;
-        console.log('Connected as ID ' + connection.threadId);
+        
 
         const interogatie = ('SELECT * FROM ' + req.params.grupa + ' WHERE id = ?');
 

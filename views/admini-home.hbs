@@ -1,0 +1,47 @@
+{{#if removedUser}}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        Deleted succesfully.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+{{/if}}
+
+<div class="row">
+    <div class="col-6 alb">
+        <h1>Admini</h1>
+    </div>
+    <div class="col-6 d-flex justify-content-end">
+        <a href="/registerAdmin" type="button" class="btn btn-primary align-self-center">+Add
+            admin</a>
+    </div>
+</div>
+
+<table class="table table-bordered table-hover">
+    <thead class="thead-dark thead-albastru">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Nume</th>
+            <th scope="col">Prenume</th>
+            <th scope="col">E-mail</th>
+            <th scope="col">Telefon</th>
+            <th scope="col" class="text-end">Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {{#each rows}}
+            <tr>
+                <th scope="row">{{this.id}}</th>
+                <td>{{this.name}}</td>
+                <td>{{this.prenume}}</td>
+                <td>{{this.email}}</td>
+                <td>{{this.telefon}}</td>
+                <td class="text-end">
+                    <a href="/profileVisit/{{this.email}}" type="button" class="btn btn-light btn-small"><i
+                            class="bi bi-eye"></i>View</a>
+                    <a href="/deleteAdmin/{{this.email}}" type="button"
+                        class="btn btn-light btn-small"><i class="bi bi-person-x"></i>Delete</a>
+                </td>
+            </tr>
+        {{/each}}
+    </tbody>
+</table>

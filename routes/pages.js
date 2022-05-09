@@ -22,18 +22,6 @@ router.get('/register', authController.isLoggedIn, (req, res) => {
     }
 });
 
-router.get('/registerAdmin/:email', authController.isLoggedIn, (req, res) => {
-    if (req.user) {
-        if (req.user.admin) {
-            res.render('register-admin', { user: req.user, title: 'register-layout', layout: 'profile-auth' });
-        } else {
-            res.redirect('/profile', { title: 'profile-layout', layout: 'profile-auth' });
-        }
-    } else {
-        res.redirect('/login');
-    }
-});
-
 router.get('/login', (req, res) => {
     res.render('login', { title: 'register-layout', layout: 'profile-auth' });
 });
@@ -120,9 +108,24 @@ const studentController = require('../controllers/studentController');
 
 router.get('/student-orar/:grupa', studentController.isLoggedIn, studentController.viewOrar);
 
+router.get('/student-alte-grupe',studentController.isLoggedIn,studentController.viewAlteGrupe);
+router.get('/student-alte-grupe/:grupa',studentController.isLoggedIn,studentController.viewAlteGrupeOrar);
+
 router.get('/student-catalog/:grupa/:email', studentController.isLoggedIn, studentController.viewCatalog);
 
 router.get('/student-financiar/:grupa/:email', studentController.isLoggedIn, studentController.viewFinanciar);
 
+router.get('/student-admini', studentController.isLoggedIn, studentController.viewAdmini);
+
 module.exports = router;
+
+//Administratori
+const adminiController = require('../controllers/adminiController');
+
+router.get('/admini',adminiController.isLoggedIn,adminiController.view);
+router.post('/admini', adminiController.isLoggedIn,adminiController.find);
+
+router.get('/registerAdmin', adminiController.isLoggedIn,adminiController.registerAdmin);
+
+router.get('/deleteAdmin/:email', adminiController.isLoggedIn, adminiController.deleteAdmin);
 

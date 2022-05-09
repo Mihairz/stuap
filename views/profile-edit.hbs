@@ -7,7 +7,7 @@
                     <div class="card-body">
                         <div class="d-flex flex-column align-items-center text-center">
                             {{#if user.poza}}
-                                <div class="circle-avatar" style="background-image:url({{user.poza}})"></div>
+                                <div class="circle-avatar" style="background-image:url(/upload/{{user.poza}})"></div>
                             {{else}}
                                 <img src="/public/images/standard-profile-picture.png" alt="pozaprofil"
                                 class="rounded-circle" width="150">
@@ -64,6 +64,26 @@
                                     </div>
                                     <div class="col-sm-9 text-secondary">
                                         <input type="text" maxlength="10" name="telefon" value="{{this.telefon}}">
+                                    </div>
+                                </div>
+                                <hr>
+
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <h6 class="mb-0">Password</h6>
+                                    </div>
+                                    <div class="col-sm-9 text-secondary">
+                                        <input type="password" maxlength="255" name="password">
+                                    </div>
+                                </div>
+                                <hr>
+
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <h6 class="mb-0">Confirm new password</h6>
+                                    </div>
+                                    <div class="col-sm-9 text-secondary">
+                                        <input type="password" maxlength="10" name="passwordConfirm">
                                     </div>
                                 </div>
                                 <hr>

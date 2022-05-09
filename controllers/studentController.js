@@ -15,7 +15,7 @@ exports.viewOrar = (req, res) => {
 
     pool.getConnection((err, connection) => {
         if (err) throw err;
-        console.log('Connected as ID ' + connection.threadId);
+        
 
         connection.query('SELECT * FROM orar WHERE grupa = ?', [req.params.grupa], (err, rows) => {
             connection.release();
@@ -40,6 +40,64 @@ exports.viewOrar = (req, res) => {
                             res.redirect('/login');
                         }
                     }
+                })
+            } else {
+                console.log(err);
+            }
+        })
+    })
+}
+
+exports.viewAlteGrupe = (req, res) => {
+
+    pool.getConnection((err, connection) => {
+        if (err) throw err; 
+
+        connection.query("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = ?", ['stuap'], (err, rows) => {
+            connection.release();
+
+            for (var key in rows) {
+                if (rows[key].TABLE_NAME == "orar" || rows[key].TABLE_NAME == "users" || rows[key].TABLE_NAME == "facultati") {
+                    delete rows[key];
+                }
+            }
+
+            if (!err) {
+                if (req.user) {
+                    res.render('student-alte-grupe', { rows, title: 'studentaltegrupe', layout: 'student-alte-grupe-main' });
+                } else {
+                    res.redirect('/login');
+                }
+            } else {
+                console.log(err);
+            }
+        })
+    })
+}
+
+exports.viewAlteGrupeOrar = (req, res) => {
+
+    pool.getConnection((err, connection) => {
+        if (err) throw err;
+
+        connection.query('SELECT * FROM orar WHERE grupa = ?', [req.params.grupa], (err, rows) => {
+            connection.release();
+
+            if (!err) {
+                connection.query('SELECT * FROM users WHERE grupa = ?', [req.params.grupa], (errr, studenti) => {
+                    if (errr) { console.log(errr) }
+                    else {
+  
+                
+                                if (req.user.admin) {
+                                    res.redirect('/orar');
+                                } else {
+                                    res.render('student-orar', { rows, studenti, title: 'studentorarview', layout: 'student-orar-main' });
+                                }
+                            }
+                        
+
+                    
                 })
             } else {
                 console.log(err);
@@ -92,7 +150,7 @@ exports.viewFinanciar = (req, res) => {
 
     pool.getConnection((err, connection) => {
         if (err) throw err;
-        console.log('Connected as ID ' + connection.threadId);
+        
 
         connection.query('SELECT * FROM orar WHERE grupa=?', [req.params.grupa], (error, prof) => {
             if (err) { console.log(error) }
@@ -129,6 +187,24 @@ exports.viewFinanciar = (req, res) => {
     })
 }
 
+exports.viewAdmini = (req,res)=>{
+    pool.getConnection((err, connection) => {
+        if(err){console.log(err)}
+        else{
+            connection.query('SELECT * FROM users WHERE admin = 1', (err,rows)=>{
+                if(err){console.log(err)}
+                else{
+                    if(req.user){
+                        res.render('student-admini',{rows,user:req.user,title:'studentadmini',layout:'profile-auth'})
+                    }
+                    else{
+                        res.redirect('/login');
+                    }
+                }
+            })
+        }
+    })
+}
 
 exports.isLoggedIn = async (req, res, next) => {
 

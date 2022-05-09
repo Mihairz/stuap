@@ -99,7 +99,9 @@
 
             <div class="col-md-11 profile-buttons" style="text-align: right;">
                 {{#if user.admin}}
-                    <a class="btn-lg add-admin-buton" href="/registerAdmin/{{user.email}}">Add Admin</a>
+                    <a class="btn-lg add-admin-buton" href="/admini">Administrators</a>
+                {{else}}
+                    <a class="btn-lg add-admin-buton" href="/student-admini">Administrators</a>
                 {{/if}}
 
                 <a class="btn-lg buton-edit-profile" href="/profileEdit/{{user.email}}">Edit Profile</a>

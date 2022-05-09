@@ -16,7 +16,7 @@ exports.view = (req, res) => {
 
     pool.getConnection((err, connection) => {
         if (err) throw err;
-        console.log('Connected as ID ' + connection.threadId);
+        
 
         connection.query('SELECT * FROM orar', (err, rows) => {
 
@@ -46,7 +46,7 @@ exports.view = (req, res) => {
 exports.find = (req, res) => {
     pool.getConnection((err, connection) => {
         if (err) throw err;
-        console.log('Connected as ID ' + connection.threadId);
+        
 
         let searchTerm = req.body.search;
 
@@ -89,36 +89,45 @@ exports.create = (req, res) => {
 
         pool.getConnection((err, connection) => {
             if (err) throw err;
-            console.log('Connected as ID ' + connection.threadId);
+            
 
             let searchTerm = req.body.search;
 
-            connection.query('INSERT INTO orar SET facultate = ?, grupa =?, profesor_coordonator = ?, email_profesor_coordonator = ?, telefon_profesor_coordonator = ?, orar = ?', [facultate, grupaLowercaseFaraSpatii, profesor_coordonator, email_profesor_coordonator, telefon_profesor_coordonator, orar], (err, rows) => {
-
-                connection.release();
-
-                if (!err) {
-                    if (req.user) {
-                        res.render('orar-add', { alert: 'Grupa ' + grupaLowercaseFaraSpatii + ' has been added succesfully.', title: 'orarnew', layout: 'orar-main' });
+            connection.query ('SELECT * FROM orar WHERE grupa = ?',[grupaLowercaseFaraSpatii],(err,grupe)=>{
+                if(err){console.log(err)}
+                else{
+                    if(grupe.length != 0 ){
+                        res.render('orar-add', { eroare: 'Grupa deja existenta.', title: 'orarnew', layout: 'orar-main' });
                     } else {
-                        res.redirect('/login');
+                        connection.query('INSERT INTO orar SET facultate = ?, grupa =?, profesor_coordonator = ?, email_profesor_coordonator = ?, telefon_profesor_coordonator = ?, orar = ?', [facultate, grupaLowercaseFaraSpatii, profesor_coordonator, email_profesor_coordonator, telefon_profesor_coordonator, orar], (err, rows) => {
+
+                            connection.release();
+            
+                            if (!err) {
+                                if (req.user) {
+                                    res.render('orar-add', { alert: 'Grupa ' + grupaLowercaseFaraSpatii + ' has been added succesfully.', title: 'orarnew', layout: 'orar-main' });
+                                } else {
+                                    res.redirect('/login');
+                                }
+                            } else {
+                                console.log(err);
+                            }
+                        })
+            
+                        //Creeaza automat tabel cu grupa pentru baza de date
+                        connection.query('CREATE TABLE `' + grupaLowercaseFaraSpatii + '` ( `id` INT NOT NULL AUTO_INCREMENT ,`grupa` VARCHAR(10) NOT NULL,`facultate` VARCHAR(10) NOT NULL ,`nume` VARCHAR(10) NOT NULL , `prenume` VARCHAR(30) NOT NULL ,`email` VARCHAR(30) NOT NULL,`telefon` VARCHAR(10) NOT NULL, `note` TEXT(255) NOT NULL ,`financiar` TEXT(255) NOT NULL, PRIMARY KEY (`id`)) ENGINE = InnoDB; ', (err) => {
+                            if (err) {
+                                console.log(err)
+                            }
+                            else {
+                                console.log("Tabel creat.")
+                            }
+                        })
+            
+                        connection.query("INSERT INTO facultati SET facultate = ?", [facultate], (err) => { if (err) { console.log(err) } })
                     }
-                } else {
-                    console.log(err);
                 }
             })
-
-            //Creeaza automat tabel cu grupa pentru baza de date
-            connection.query('CREATE TABLE `' + grupaLowercaseFaraSpatii + '` ( `id` INT NOT NULL AUTO_INCREMENT ,`grupa` VARCHAR(10) NOT NULL,`facultate` VARCHAR(10) NOT NULL ,`nume` VARCHAR(10) NOT NULL , `prenume` VARCHAR(30) NOT NULL ,`email` VARCHAR(30) NOT NULL,`telefon` VARCHAR(10) NOT NULL, `note` TEXT(255) NOT NULL ,`financiar` TEXT(255) NOT NULL, PRIMARY KEY (`id`)) ENGINE = InnoDB; ', (err) => {
-                if (err) {
-                    console.log(err)
-                }
-                else {
-                    console.log("Tabel creat.")
-                }
-            })
-
-            connection.query("INSERT INTO facultati SET facultate = ?", [facultate], (err) => { if (err) { console.log(err) } })
         })
     }
 }
@@ -128,7 +137,7 @@ exports.edit = (req, res) => {
 
     pool.getConnection((err, connection) => {
         if (err) throw err;
-        console.log('Connected as ID ' + connection.threadId);
+        
 
         connection.query('SELECT * FROM orar WHERE grupa = ?', [req.params.grupa], (err, rows) => {
 
@@ -171,44 +180,103 @@ exports.update = (req, res) => {
         })
 
     } else {
+        
         const grupaLowercaseFaraSpatii = (grupa.replace(/ +/g, '')).toLowerCase();
 
         pool.getConnection((err, connection) => {
             if (err) throw err;
-            //console.log('Connected as ID ' + connection.threadId);
+            
+            connection.query ('SELECT * FROM orar WHERE grupa = ?',[grupaLowercaseFaraSpatii],(err,grupe)=>{
+                if(err){console.log(err)}
+                else{
+                    if(grupe.length != 0 ){
+                        if(grupaLowercaseFaraSpatii != req.params.grupa){
+                            connection.query('SELECT * FROM orar WHERE grupa = ?', [req.params.grupa], (errr, rows) => {
 
-            connection.query('UPDATE orar SET facultate= ?,grupa= ?,profesor_coordonator= ?,email_profesor_coordonator= ?,telefon_profesor_coordonator= ?,orar= ? WHERE id = ?', [facultate, grupaLowercaseFaraSpatii, profesor_coordonator, email_profesor_coordonator, telefon_profesor_coordonator, orar, req.params.id], (err, rows) => {
+                                connection.release();
+                
+                                if (!errr) {
+                                    if (req.user) {
+                                        res.render('orar-edit', { rows, eroare: 'Grupa exista deja.', title: 'orarupdate', layout: 'orar-main' });
+                                    } else {
+                                        res.redirect('/login');
+                                    }
+                                } else {
+                                    console.log(err);
+                                }
+                            })
+                        } else{
+                        
+                            connection.query('UPDATE orar SET facultate= ?,grupa= ?,profesor_coordonator= ?,email_profesor_coordonator= ?,telefon_profesor_coordonator= ?,orar= ? WHERE id = ?', [facultate, grupaLowercaseFaraSpatii, profesor_coordonator, email_profesor_coordonator, telefon_profesor_coordonator, orar, req.params.id], (err, rows) => {
 
-                connection.release();
-
-                if (!err) {
-                    pool.getConnection((err, connection) => {
-                        if (err) throw err;
-                        console.log('Connected as ID ' + connection.threadId);
-
-                        connection.query('SELECT * FROM orar WHERE grupa = ?', [req.params.grupa], (errr, rows) => {
+                                connection.release();
+                
+                                if (!err) {
+                                    pool.getConnection((err, connection) => {
+                                        if (err) throw err;
+                                        
+                
+                                        connection.query('SELECT * FROM orar WHERE grupa = ?', [req.params.grupa], (errr, rows) => {
+                
+                                            connection.release();
+                
+                                            if (!errr) {
+                                                if (req.user) {
+                                                    res.render('orar-edit', { rows, alert: 'Grupa ' + grupaLowercaseFaraSpatii + ', from ' + facultate + ' has been updated.', title: 'orarupdate', layout: 'orar-main' });
+                                                } else {
+                                                    res.redirect('/login');
+                                                }
+                                            } else {
+                                                console.log(err);
+                                            }
+                                        })
+                                    })
+                                } else {
+                                    console.log(err);
+                                }
+                            })
+                
+                            connection.query('UPDATE ' + req.params.grupa + ' SET grupa =?', [grupaLowercaseFaraSpatii], (err) => { if (err) { console.log(err) } })
+                            connection.query('UPDATE users SET grupa=? WHERE grupa = ?', [grupaLowercaseFaraSpatii, req.params.grupa], (err) => { if (err) { console.log(err) } })
+                            connection.query('ALTER TABLE ' + req.params.grupa + ' RENAME TO ' + grupaLowercaseFaraSpatii, (err) => { if (err) { console.log(err) } })
+                        }   
+                    } else{
+                        
+                        connection.query('UPDATE orar SET facultate= ?,grupa= ?,profesor_coordonator= ?,email_profesor_coordonator= ?,telefon_profesor_coordonator= ?,orar= ? WHERE id = ?', [facultate, grupaLowercaseFaraSpatii, profesor_coordonator, email_profesor_coordonator, telefon_profesor_coordonator, orar, req.params.id], (err, rows) => {
 
                             connection.release();
-
-                            if (!errr) {
-                                if (req.user) {
-                                    res.render('orar-edit', { rows, alert: 'Grupa ' + grupaLowercaseFaraSpatii + ', from ' + facultate + ' has been updated.', title: 'orarupdate', layout: 'orar-main' });
-                                } else {
-                                    res.redirect('/login');
-                                }
+            
+                            if (!err) {
+                                pool.getConnection((err, connection) => {
+                                    if (err) throw err;
+                                    
+            
+                                    connection.query('SELECT * FROM orar WHERE grupa = ?', [req.params.grupa], (errr, rows) => {
+            
+                                        connection.release();
+            
+                                        if (!errr) {
+                                            if (req.user) {
+                                                res.render('orar-edit', { rows, alert: 'Grupa ' + grupaLowercaseFaraSpatii + ', from ' + facultate + ' has been updated.', title: 'orarupdate', layout: 'orar-main' });
+                                            } else {
+                                                res.redirect('/login');
+                                            }
+                                        } else {
+                                            console.log(err);
+                                        }
+                                    })
+                                })
                             } else {
                                 console.log(err);
                             }
                         })
-                    })
-                } else {
-                    console.log(err);
+            
+                        connection.query('UPDATE ' + req.params.grupa + ' SET grupa =?', [grupaLowercaseFaraSpatii], (err) => { if (err) { console.log(err) } })
+                        connection.query('UPDATE users SET grupa=? WHERE grupa = ?', [grupaLowercaseFaraSpatii, req.params.grupa], (err) => { if (err) { console.log(err) } })
+                        connection.query('ALTER TABLE ' + req.params.grupa + ' RENAME TO ' + grupaLowercaseFaraSpatii, (err) => { if (err) { console.log(err) } })
+                    }   
                 }
             })
-
-            connection.query('UPDATE ' + req.params.grupa + ' SET grupa =?', [grupaLowercaseFaraSpatii], (err) => { if (err) { console.log(err) } })
-            connection.query('UPDATE users SET grupa=? WHERE grupa = ?', [grupaLowercaseFaraSpatii, req.params.grupa], (err) => { if (err) { console.log(err) } })
-            connection.query('ALTER TABLE ' + req.params.grupa + ' RENAME TO ' + grupaLowercaseFaraSpatii, (err) => { if (err) { console.log(err) } })
         })
     }
 }
@@ -218,7 +286,7 @@ exports.delete = (req, res) => {
 
     pool.getConnection((err, connection) => {
         if (err) throw err;
-        console.log('Connected as ID ' + connection.threadId);
+        
 
         connection.query('DELETE FROM orar WHERE id = ?', [req.params.id], (err, rows) => {
 
@@ -249,7 +317,7 @@ exports.viewuser = (req, res) => {
 
     pool.getConnection((err, connection) => {
         if (err) throw err;
-        console.log('Connected as ID ' + connection.threadId);
+        
 
         connection.query('SELECT * FROM orar WHERE grupa = ?', [req.params.grupa], (err, rows) => {
 

@@ -16,7 +16,7 @@ exports.view = (req, res) => {
 
     pool.getConnection((err, connection) => {
         if (err) throw err;
-        console.log('Connected as ID ' + connection.threadId);
+        
 
         connection.query("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = ?", ['stuap'], (err, rows) => {
 
@@ -50,7 +50,7 @@ exports.view = (req, res) => {
 exports.find = (req, res) => {
     pool.getConnection((err, connection) => {
         if (err) throw err;
-        console.log('Connected as ID ' + connection.threadId);
+        
 
         let searchTerm = req.body.search;
 
@@ -82,7 +82,7 @@ exports.viewuser = (req, res) => {
 
     pool.getConnection((err, connection) => {
         if (err) throw err;
-        console.log('Connected as ID ' + connection.threadId);
+        
 
         if (req.params.financiar == "orar" || req.params.financiar == "users") {
             res.redirect('/financiar');

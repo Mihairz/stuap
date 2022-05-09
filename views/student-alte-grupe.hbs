@@ -1,0 +1,27 @@
+<div class="row">
+    <div class="col-6 alb">
+        <h1>Alte grupe</h1>
+    </div>
+</div>
+
+<table class="table table-bordered table-hover">
+    <thead class="thead-dark thead-albastru">
+        <tr>
+            <th scope="col">Grupa</th>
+            <th scope="col" class="text-end">Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {{#each rows}}
+            <tr>
+                <td>{{this.TABLE_NAME}}</td>
+
+                <td class="text-end">
+                    <a href="/student-alte-grupe/{{this.TABLE_NAME}}" type="button" class="btn btn-light btn-small"><i class="bi bi-eye"></i>View</a>
+                </td>
+            </tr>
+        {{/each}}
+    </tbody>
+
+</table>
