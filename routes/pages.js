@@ -10,6 +10,10 @@ router.get('/index', authController.isLoggedIn, (req, res) => {
     res.render('index', { user: req.user });
 });
 
+router.get('/about',(req,res)=>{
+    res.render('about');
+})
+
 router.get('/register', authController.isLoggedIn, (req, res) => {
     if (req.user) {
         if (req.user.admin) {

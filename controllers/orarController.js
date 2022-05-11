@@ -115,7 +115,7 @@ exports.create = (req, res) => {
                         })
             
                         //Creeaza automat tabel cu grupa pentru baza de date
-                        connection.query('CREATE TABLE `' + grupaLowercaseFaraSpatii + '` ( `id` INT NOT NULL AUTO_INCREMENT ,`grupa` VARCHAR(10) NOT NULL,`facultate` VARCHAR(10) NOT NULL ,`nume` VARCHAR(10) NOT NULL , `prenume` VARCHAR(30) NOT NULL ,`email` VARCHAR(30) NOT NULL,`telefon` VARCHAR(10) NOT NULL, `note` TEXT(255) NOT NULL ,`financiar` TEXT(255) NOT NULL, PRIMARY KEY (`id`)) ENGINE = InnoDB; ', (err) => {
+                        connection.query('CREATE TABLE `' + grupaLowercaseFaraSpatii + '` ( `id` INT NOT NULL AUTO_INCREMENT ,`grupa` VARCHAR(10) NOT NULL,`facultate` VARCHAR(50) NOT NULL ,`nume` VARCHAR(10) NOT NULL , `prenume` VARCHAR(30) NOT NULL ,`email` VARCHAR(30) NOT NULL,`telefon` VARCHAR(10) NOT NULL, `note` TEXT(255) NOT NULL ,`financiar` TEXT(255) NOT NULL, PRIMARY KEY (`id`)) ENGINE = InnoDB; ', (err) => {
                             if (err) {
                                 console.log(err)
                             }
