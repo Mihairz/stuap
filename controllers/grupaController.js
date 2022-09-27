@@ -120,7 +120,7 @@ exports.create = (req, res) => {
                                     if (error) { console.log(error) }
                                     else {
                                         if (req.user) {
-                                            res.render('grupa-add', { grupamea, alert: 'Student ' + nume + ' ' + prenume + ' has been added succesfully.', title: 'grupanew', layout: 'grupa-main' });
+                                            res.render('grupa-add', { grupamea, alert: 'Student ' + nume + ' ' + prenume + ' a fost adăugat cu succes.', title: 'grupanew', layout: 'grupa-main' });
                                         } else {
                                             res.redirect('/login');
                                         }
@@ -261,7 +261,7 @@ exports.update = (req, res) => {
                                         if (!err) {
                                             const grupamea = req.params.grupa;
                                             if (req.user) {
-                                                res.render('grupa-edit', { rows, grupamea, alert: 'Student ' + nume + ' ' + prenume + ' has been updated succesfully.', title: 'grupaupdate', layout: 'grupa-main' });
+                                                res.render('grupa-edit', { rows, grupamea, alert: 'Student ' + nume + ' ' + prenume + ' a fost editat cu succes.', title: 'grupaupdate', layout: 'grupa-main' });
                                             } else {
                                                 res.redirect('/login');
                                             }

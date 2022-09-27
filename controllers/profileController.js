@@ -98,7 +98,7 @@ exports.update = (req, res) => {
                                         connection.query('SELECT * FROM users WHERE email = ?', [req.params.email], (err, rowss) => {
                                             if (!err) {
                                                 if (req.user) {
-                                                    res.render('profile-edit', { rowss, user: req.user, alert: 'Succesfully updated.', title: 'profiledit', layout: 'profile-auth' });
+                                                    res.render('profile-edit', { rowss, user: req.user, alert: 'Editat cu succes.', title: 'profiledit', layout: 'profile-auth' });
                                                 } else {
                                                     res.redirect('/login');
                                                 }
@@ -133,7 +133,7 @@ exports.update = (req, res) => {
                                         connection.query('SELECT * FROM users WHERE email = ?', [req.params.email], (err, rowss) => {
                                             if (!err) {
                                                 if (req.user) {
-                                                    res.render('profile-edit', { rowss, user: req.user, alert: 'Succesfully updated.', title: 'profiledit', layout: 'profile-auth' });
+                                                    res.render('profile-edit', { rowss, user: req.user, alert: 'Editat cu succes.', title: 'profiledit', layout: 'profile-auth' });
                                                 } else {
                                                     res.redirect('/login');
                                                 }

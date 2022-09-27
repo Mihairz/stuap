@@ -105,7 +105,7 @@ exports.create = (req, res) => {
             
                             if (!err) {
                                 if (req.user) {
-                                    res.render('orar-add', { alert: 'Grupa ' + grupaLowercaseFaraSpatii + ' has been added succesfully.', title: 'orarnew', layout: 'orar-main' });
+                                    res.render('orar-add', { alert: 'Grupa ' + grupaLowercaseFaraSpatii + ' a fost adăugată cu succes.', title: 'orarnew', layout: 'orar-main' });
                                 } else {
                                     res.redirect('/login');
                                 }
@@ -222,7 +222,7 @@ exports.update = (req, res) => {
                 
                                             if (!errr) {
                                                 if (req.user) {
-                                                    res.render('orar-edit', { rows, alert: 'Grupa ' + grupaLowercaseFaraSpatii + ', from ' + facultate + ' has been updated.', title: 'orarupdate', layout: 'orar-main' });
+                                                    res.render('orar-edit', { rows, alert: 'Grupa ' + grupaLowercaseFaraSpatii + ', din ' + facultate + ' a fost editată cu succes.', title: 'orarupdate', layout: 'orar-main' });
                                                 } else {
                                                     res.redirect('/login');
                                                 }
@@ -257,7 +257,7 @@ exports.update = (req, res) => {
             
                                         if (!errr) {
                                             if (req.user) {
-                                                res.render('orar-edit', { rows, alert: 'Grupa ' + grupaLowercaseFaraSpatii + ', from ' + facultate + ' has been updated.', title: 'orarupdate', layout: 'orar-main' });
+                                                res.render('orar-edit', { rows, alert: 'Grupa ' + grupaLowercaseFaraSpatii + ', din ' + facultate + ' a fost editată cu succes.', title: 'orarupdate', layout: 'orar-main' });
                                             } else {
                                                 res.redirect('/login');
                                             }

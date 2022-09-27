@@ -25,8 +25,6 @@ const exphbs = require('express-handlebars');
 const handlebars = exphbs.create({ extname: '.hbs', });
 app.engine('.hbs', handlebars.engine);
 
-
-
 const mysql = require('mysql');
 const db = mysql.createConnection({
     host: process.env.DATABASE_HOST,

@@ -109,7 +109,7 @@ exports.create = (req, res) => {
                 else {
                     console.log("Tabel creat.")
                     if (req.user) {
-                        res.render('catalog-add', { alert: grupaLowercaseFaraSpatii + ' added succesfully.', title: 'catalognew', layout: 'catalog-main' });
+                        res.render('catalog-add', { alert: grupaLowercaseFaraSpatii + ' a fost adăugată cu succes.', title: 'catalognew', layout: 'catalog-main' });
                     } else {
                         res.redirect('/login');
                     }
@@ -189,7 +189,7 @@ exports.update = (req, res) => {
                             if (err) throw err; 
 
                             if (req.user) {
-                                res.render('catalog-edit', {catalog:grupaLowercaseFaraSpatii, alert: grupaLowercaseFaraSpatii + ' updated succesfully.', title: 'catalogupdate', layout: 'catalog-main' });
+                                res.render('catalog-edit', {catalog:grupaLowercaseFaraSpatii, alert: grupaLowercaseFaraSpatii + ' editată cu succes.', title: 'catalogupdate', layout: 'catalog-main' });
                             } else {
                                 res.redirect('/login');
                             }
