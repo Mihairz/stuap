@@ -12,6 +12,9 @@ Informations that students can find by accessing STUAp:
 - Contact details of the secretariat and libraries
 - Contact details of other students and administrators
 
+Frontend was made using HTML, CSS, JavaScript, Handlebars and Bootstrap.
+Backend was made with NodeJS.
+
 You can find some screenshots attached below:
 
 Homepage:
